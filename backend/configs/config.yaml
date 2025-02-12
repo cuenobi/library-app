@@ -1,0 +1,10 @@
+SERVER:
+  PORT: "8080"
+
+CONNECTION:
+  POSTGRES:
+    HOST: "localhost"
+    PORT: "5432"
+    USERNAME: "admin"
+    PASSWORD: "password"
+    NAME: "library"
