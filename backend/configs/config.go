@@ -54,6 +54,8 @@ func loadConfig() *Config {
 		panic(err.Error())
 	}
 
+	viper.AutomaticEnv()
+
 	// Server config
 	ServerConfig := &ServerConfig{
 		Port: viper.GetString("SERVER.PORT"),
@@ -61,11 +63,11 @@ func loadConfig() *Config {
 
 	// Postgres config
 	PostGresConfig := &postgres.PostgresConfig{
-		Host:     viper.GetString("CONNECTION.POSTGRES.HOST"),
-		Port:     viper.GetString("CONNECTION.POSTGRES.PORT"),
-		Name:     viper.GetString("CONNECTION.POSTGRES.NAME"),
-		Username: viper.GetString("CONNECTION.POSTGRES.USERNAME"),
-		Password: viper.GetString("CONNECTION.POSTGRES.PASSWORD"),
+		Host:     viper.GetString("DB_HOST"),
+		Port:     viper.GetString("DB_PORT"),
+		Name:     viper.GetString("DB_NAME"),
+		Username: viper.GetString("DB_USER"),
+		Password: viper.GetString("DB_PASSWORD"),
 	}
 
 	return &Config{
