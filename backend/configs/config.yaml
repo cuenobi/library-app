@@ -8,3 +8,7 @@ CONNECTION:
     USERNAME: "admin"
     PASSWORD: "password"
     NAME: "library"
+
+JWT:
+  SECRET_KEY: "secret"
+  EXP: 24
