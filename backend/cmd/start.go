@@ -13,8 +13,8 @@ import (
 	"library-service/internal/adapter/postgres"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/jackc/pgx/v5"
 	"github.com/spf13/cobra"
+	"gorm.io/gorm"
 )
 
 func start(cmd *cobra.Command, args []string) (err error) {
@@ -41,7 +41,7 @@ func start(cmd *cobra.Command, args []string) (err error) {
 // listening on the specified port. It returns the Fiber application instance.
 // The provided logger is used for logging server errors, and the postgres connection
 // is available for database interactions.
-func startServer(port string, logger *slog.Logger, pg *pgx.Conn) *fiber.App {
+func startServer(port string, logger *slog.Logger, pg *gorm.DB) *fiber.App {
 	// Create a new Fiber application
 	f := fiber.New()
 
@@ -87,7 +87,7 @@ func gracefulShutdown(f *fiber.App, logger *slog.Logger) {
 	select {
 	case <-shutdownDeadline:
 		logger.Info("Graceful shutdown completed")
-	case <-time.After(3 * time.Second):
+	case <-time.After(5 * time.Second):
 		logger.Info("Graceful shutdown timed out")
 	}
 

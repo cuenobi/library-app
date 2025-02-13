@@ -4,6 +4,7 @@ import (
 	"embed"
 	"errors"
 	"io/fs"
+	"os"
 	"sync"
 
 	"library-service/internal/adapter/postgres"
@@ -30,10 +31,13 @@ type ServerConfig struct {
 	Port string
 }
 
+// loadConfig loads the configuration from the config files.
 func loadConfig() *Config {
 	viper.SetConfigType("yaml")
 
-	// Load base config
+	isDocker := os.Getenv("RUNNING_IN_DOCKER") == "true"
+
+	// Load the base config
 	baseConfig, err := configs.Open("config.yaml")
 	if err != nil {
 		panic(err.Error())
@@ -43,7 +47,7 @@ func loadConfig() *Config {
 		panic(err.Error())
 	}
 
-	// Load dev config (optional)
+	// If the config-dev.yaml file exists, merge it with the base config
 	devConfig, err := configs.Open("config-dev.yaml")
 	if err == nil {
 		err = viper.MergeConfig(devConfig)
@@ -54,6 +58,7 @@ func loadConfig() *Config {
 		panic(err.Error())
 	}
 
+	// Enable automatic environment variable loading
 	viper.AutomaticEnv()
 
 	// Server config
@@ -62,12 +67,23 @@ func loadConfig() *Config {
 	}
 
 	// Postgres config
-	PostGresConfig := &postgres.PostgresConfig{
-		Host:     viper.GetString("DB_HOST"),
-		Port:     viper.GetString("DB_PORT"),
-		Name:     viper.GetString("DB_NAME"),
-		Username: viper.GetString("DB_USER"),
-		Password: viper.GetString("DB_PASSWORD"),
+	var PostGresConfig *postgres.PostgresConfig
+	if isDocker {
+		PostGresConfig = &postgres.PostgresConfig{
+			Host:     viper.GetString("DB_HOST"),
+			Port:     viper.GetString("DB_PORT"),
+			Name:     viper.GetString("DB_NAME"),
+			Username: viper.GetString("DB_USER"),
+			Password: viper.GetString("DB_PASSWORD"),
+		}
+	} else {
+		PostGresConfig = &postgres.PostgresConfig{
+			Host:     viper.GetString("CONNECTION.POSTGRES.HOST"),
+			Port:     viper.GetString("CONNECTION.POSTGRES.PORT"),
+			Name:     viper.GetString("CONNECTION.POSTGRES.NAME"),
+			Username: viper.GetString("CONNECTION.POSTGRES.USERNAME"),
+			Password: viper.GetString("CONNECTION.POSTGRES.PASSWORD"),
+		}
 	}
 
 	return &Config{

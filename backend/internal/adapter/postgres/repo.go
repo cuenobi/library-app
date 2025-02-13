@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/jackc/pgx/v5"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 type PostgresConfig struct {
@@ -19,24 +20,15 @@ type PostgresConfig struct {
 // NewPostgres creates a new connection to the PostgreSQL database.
 // It takes a PostgresConfig struct pointer, a context, and returns a pointer to the connection.
 // The connection is deferred to be closed after the function returns.
-func NewPostgres(cfg *PostgresConfig, ctx context.Context) *pgx.Conn {
+func NewPostgres(cfg *PostgresConfig, ctx context.Context) *gorm.DB {
 	// Construct the PostgreSQL connection string
-	connStr := fmt.Sprintf("postgresql://%s:%s@%s:%s/%s?sslmode=disable", cfg.Username, cfg.Password, cfg.Host, cfg.Port, cfg.Name)
+	connStr := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable", cfg.Host, cfg.Username, cfg.Password, cfg.Name, cfg.Port)
 
 	// Open the connection
-	conn, err := pgx.Connect(ctx, connStr)
+	db, err := gorm.Open(postgres.Open(connStr), &gorm.Config{})
 	if err != nil {
-		log.Fatal("Unable to connect to database:", err)
+		log.Fatal("connect to db error:", err)
 	}
 
-	// Test the connection
-	err = conn.Ping(ctx)
-	if err != nil {
-		log.Fatal("Ping failed:", err)
-	}
-
-	// Defer the closing of the connection
-	defer conn.Close(ctx)
-
-	return conn
+	return db
 }

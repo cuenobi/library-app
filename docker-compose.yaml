@@ -20,6 +20,7 @@ services:
     depends_on:
       - db
     environment:
+      RUNNING_IN_DOCKER: "true"
       DB_HOST: db
       DB_PORT: "5432"
       DB_USER: admin
