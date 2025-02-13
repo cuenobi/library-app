@@ -1,6 +1,7 @@
 package jwt
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -18,24 +19,23 @@ func NewJwtToken(cfg Jwt) *Jwt {
 	}
 }
 
-// Create claims with multiple fields populated
 type CustomClaims struct {
 	Username string
+	Role     string
 	jwt.RegisteredClaims
 }
 
-// Create a new token object, specifying signing method and the claims
-func (j *Jwt) Generate(username string) string {
+func (j *Jwt) Generate(username, role string) string {
 	claims := CustomClaims{
-		username,
-		jwt.RegisteredClaims{
-			// A usual scenario is to set the expiration time relative to the current time
+		Username: username,
+		Role:     role,
+		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Duration(j.Exp) * time.Hour)),
 		},
 	}
-
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	ss, err := token.SignedString(j.SecretKey)
+
+	ss, err := token.SignedString([]byte(j.SecretKey))
 	if err != nil {
 		return ""
 	}
@@ -45,6 +45,9 @@ func (j *Jwt) Generate(username string) string {
 
 func (j *Jwt) Validate(tokenString string) (*jwt.Token, error) {
 	return jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		return j.SecretKey, nil
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return []byte(j.SecretKey), nil
 	})
 }
