@@ -25,10 +25,16 @@ var (
 type Config struct {
 	Postgres     *postgres.PostgresConfig
 	ServerConfig *ServerConfig
+	JwtConfig    *JwtConfig
 }
 
 type ServerConfig struct {
 	Port string
+}
+
+type JwtConfig struct {
+	Secret string
+	Exp    int
 }
 
 // loadConfig loads the configuration from the config files.
@@ -86,9 +92,16 @@ func loadConfig() *Config {
 		}
 	}
 
+	// JWT config
+	JwtConfig := &JwtConfig{
+		Secret: viper.GetString("JWT.SECRET_KEY"),
+		Exp:    viper.GetInt("JWT.EXP"),
+	}
+
 	return &Config{
 		Postgres:     PostGresConfig,
 		ServerConfig: ServerConfig,
+		JwtConfig:    JwtConfig,
 	}
 }
 
