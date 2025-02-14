@@ -9,7 +9,7 @@ import (
 )
 
 type Book struct {
-	ID        string `gorm:"type:uuid;primary_key;default:uuid_generate_v4()"`
+	ID        string `gorm:"type:uuid;primary_key;"`
 	CreatedAt *time.Time
 	UpdatedAt *time.Time
 	Name      string

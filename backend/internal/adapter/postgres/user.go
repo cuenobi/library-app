@@ -7,21 +7,24 @@ import (
 )
 
 type User struct {
-	conn *gorm.DB
+	db *gorm.DB
 }
 
-func NewUser(conn *gorm.DB) *User {
+func NewUser(db *gorm.DB) *User {
 	return &User{
-		conn: conn,
+		db: db,
 	}
 }
 
 func (u *User) HasUsername(username string) (bool, error) {
-	return false, nil
+	var count int64
+	u.db.Model(&model.User{}).Where("username = ?", username).Count(&count)
+	return count > 0, nil
 }
 
 func (u *User) CreateUser(user *model.User) error {
-	return nil
+	result := u.db.Create(user)
+	return result.Error
 }
 
 func (u *User) GetUserByUsername(username string) (*model.User, error) {

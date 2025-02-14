@@ -9,7 +9,7 @@ import (
 )
 
 type User struct {
-	ID            string `gorm:"type:uuid;primary_key;default:uuid_generate_v4()"`
+	ID            string `gorm:"type:uuid;primary_key;"`
 	CreatedAt     *time.Time
 	UpdatedAt     *time.Time
 	Username      string `gorm:"uniqueIndex"`
@@ -25,7 +25,8 @@ type BorrowDetail struct {
 	BookName   string
 	BorrowedAt *time.Time
 	ReturnedAt *time.Time
-	User       User `gorm:"foreignKey:UserID;references:ID"`
+	User       *User `gorm:"foreignKey:UserID;references:ID"`
+	UserID     string
 }
 
 func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
