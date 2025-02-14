@@ -17,7 +17,6 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/spf13/cobra"
-	"gorm.io/gorm"
 )
 
 func start(cmd *cobra.Command, args []string) (err error) {
@@ -31,9 +30,9 @@ func start(cmd *cobra.Command, args []string) (err error) {
 
 	fmt.Println("App is starting...")
 
-	postgres := postgres.NewPostgres(cfg.Postgres, ctx)
+	_ = postgres.NewPostgres(cfg.Postgres, ctx)
 
-	f := startServer(cfg.ServerConfig.Port, logger, postgres, cfg)
+	f := startServer(cfg.ServerConfig.Port, logger, cfg)
 
 	gracefulShutdown(f, logger)
 
@@ -44,7 +43,7 @@ func start(cmd *cobra.Command, args []string) (err error) {
 // listening on the specified port. It returns the Fiber application instance.
 // The provided logger is used for logging server errors, and the postgres connection
 // is available for database interactions.
-func startServer(port string, slog *slog.Logger, pg *gorm.DB, cfg *configs.Config) *fiber.App {
+func startServer(port string, slog *slog.Logger, cfg *configs.Config) *fiber.App {
 	// Create a new Fiber application
 	f := fiber.New(fiber.Config{
 		JSONEncoder: json.Marshal,
