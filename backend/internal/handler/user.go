@@ -48,7 +48,9 @@ func (u *UserHandler) RegisterHandler(ctx *fiber.Ctx) error {
 	}
 
 	if err := u.userService.CreateUser(user); err != nil {
-		return ctx.Status(fiber.StatusInternalServerError).JSON(err.Error())
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": err.Error(),
+		})
 	}
 
 	return ctx.Status(fiber.StatusCreated).JSON(fiber.Map{
