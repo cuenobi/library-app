@@ -29,7 +29,8 @@ type Config struct {
 }
 
 type ServerConfig struct {
-	Port string
+	Port             string
+	EnableStackTrace bool
 }
 
 type JwtConfig struct {
@@ -69,7 +70,8 @@ func loadConfig() *Config {
 
 	// Server config
 	ServerConfig := &ServerConfig{
-		Port: viper.GetString("SERVER.PORT"),
+		Port:             viper.GetString("SERVER.PORT"),
+		EnableStackTrace: viper.GetBool("SERVER.ENABLE_STACK_TRACE"),
 	}
 
 	// Postgres config

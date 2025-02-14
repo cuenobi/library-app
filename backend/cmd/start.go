@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log/slog"
 	"os"
@@ -13,6 +14,8 @@ import (
 	"library-service/internal/adapter/postgres"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/spf13/cobra"
 	"gorm.io/gorm"
 )
@@ -30,7 +33,7 @@ func start(cmd *cobra.Command, args []string) (err error) {
 
 	postgres := postgres.NewPostgres(cfg.Postgres, ctx)
 
-	f := startServer(cfg.ServerConfig.Port, logger, postgres)
+	f := startServer(cfg.ServerConfig.Port, logger, postgres, cfg)
 
 	gracefulShutdown(f, logger)
 
@@ -41,9 +44,22 @@ func start(cmd *cobra.Command, args []string) (err error) {
 // listening on the specified port. It returns the Fiber application instance.
 // The provided logger is used for logging server errors, and the postgres connection
 // is available for database interactions.
-func startServer(port string, logger *slog.Logger, pg *gorm.DB) *fiber.App {
+func startServer(port string, slog *slog.Logger, pg *gorm.DB, cfg *configs.Config) *fiber.App {
 	// Create a new Fiber application
-	f := fiber.New()
+	f := fiber.New(fiber.Config{
+		JSONEncoder: json.Marshal,
+		JSONDecoder: json.Unmarshal,
+	})
+
+	f.Use(recover.New(recover.Config{
+		EnableStackTrace: cfg.ServerConfig.EnableStackTrace,
+	}))
+
+	loggerMiddleware := logger.New(logger.Config{
+		TimeFormat: "2006-01-02 15:04:05",
+		Format:     "${time} | ${status} | ${latency} | ${ips} | ${method} | ${path}\n",
+	})
+	f.Use(loggerMiddleware)
 
 	// Define a simple ping route for health checks
 	f.Get("/ping", func(c *fiber.Ctx) error {
@@ -55,7 +71,7 @@ func startServer(port string, logger *slog.Logger, pg *gorm.DB) *fiber.App {
 		// Listen on the specified port
 		if err := f.Listen(":" + port); err != nil {
 			// Log any errors encountered while starting the server
-			logger.Error("Error starting server", slog.String("error", err.Error()))
+			slog.With("error", err).Error("Error starting server")
 		}
 	}()
 
