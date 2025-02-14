@@ -4,11 +4,15 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"time"
 
+	"library-service/internal/constant"
 	"library-service/internal/model"
 
+	"github.com/google/uuid"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type PostgresConfig struct {
@@ -37,4 +41,60 @@ func NewPostgres(cfg *PostgresConfig, ctx context.Context) *gorm.DB {
 	}
 
 	return db
+}
+
+func SeedData(db *gorm.DB) {
+	users := []model.User{
+		{
+			ID:        uuid.New().String(),
+			Username:  "john_doe",
+			Password:  "password123",
+			Name:      "John Doe",
+			Role:      "admin",
+			CreatedAt: func(t time.Time) *time.Time { return &t }(time.Now()),
+		},
+		{
+			ID:        uuid.New().String(),
+			Username:  "jane_doe",
+			Password:  "password123",
+			Name:      "Jane Doe",
+			Role:      "user",
+			CreatedAt: func(t time.Time) *time.Time { return &t }(time.Now()),
+		},
+	}
+
+	for _, user := range users {
+		if err := db.Clauses(clause.OnConflict{
+			Columns:   []clause.Column{{Name: "username"}}, //
+			DoUpdates: clause.AssignmentColumns([]string{"username", "password", "name", "role", "created_at"}),
+		}).Create(&user).Error; err != nil {
+			panic("failed to seed users: " + err.Error())
+		}
+	}
+
+	books := []model.Book{
+		{
+			Name:      "The Go Programming Language",
+			Category:  "Programming",
+			Status:    constant.Available,
+			Stock:     3,
+			CreatedAt: func(t time.Time) *time.Time { return &t }(time.Now()),
+		},
+		{
+			Name:      "Clean Code",
+			Category:  "Programming",
+			Status:    constant.Available,
+			Stock:     5,
+			CreatedAt: func(t time.Time) *time.Time { return &t }(time.Now()),
+		},
+	}
+
+	for _, book := range books {
+		if err := db.Clauses(clause.OnConflict{
+			Columns:   []clause.Column{{Name: "name"}},
+			DoUpdates: clause.AssignmentColumns([]string{"name", "category", "created_at"}),
+		}).Create(&book).Error; err != nil {
+			panic("failed to seed books: " + err.Error())
+		}
+	}
 }

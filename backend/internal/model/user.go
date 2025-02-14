@@ -12,12 +12,12 @@ type User struct {
 	ID            string `gorm:"type:uuid;primary_key;"`
 	CreatedAt     *time.Time
 	UpdatedAt     *time.Time
-	Username      string `gorm:"uniqueIndex"`
+	DeletedAt     gorm.DeletedAt `gorm:"index"`
+	Username      string         `gorm:"uniqueIndex"`
 	Password      string
 	Name          string
 	Role          string
 	BorrowDetails []*BorrowDetail `gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE;"`
-	DeletedAt     gorm.DeletedAt  `gorm:"index"`
 }
 
 type BorrowDetail struct {

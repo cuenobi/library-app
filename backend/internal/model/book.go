@@ -12,7 +12,7 @@ type Book struct {
 	ID        string `gorm:"type:uuid;primary_key;"`
 	CreatedAt *time.Time
 	UpdatedAt *time.Time
-	Name      string
+	Name      string `gorm:"uniqueIndex"`
 	Category  string
 	Status    string
 	Stock     int

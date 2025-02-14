@@ -36,6 +36,9 @@ func start(cmd *cobra.Command, args []string) (err error) {
 	// init postgres
 	pg := postgres.NewPostgres(cfg.Postgres, ctx)
 
+	// seeding
+	postgres.SeedData(pg)
+
 	// init fiber
 	f := startServer(cfg.ServerConfig.Port, logger, cfg)
 
