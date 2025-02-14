@@ -3,7 +3,7 @@ package service
 import (
 	"fmt"
 
-	"library-service/internal/domain/entities"
+	"library-service/internal/domain/model"
 	"library-service/internal/port"
 )
 
@@ -17,7 +17,7 @@ func NewBookService(bookRepo port.BookRepository) *BookService {
 	}
 }
 
-func (b *BookService) CreateBook(book *entities.Book) error {
+func (b *BookService) CreateBook(book *model.Book) error {
 	bookExist, err := b.bookRepo.HasBookName(book.Name)
 	if err != nil {
 		return err

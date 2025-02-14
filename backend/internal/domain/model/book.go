@@ -1,18 +1,21 @@
-package entities
+package model
 
 import (
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
 type Book struct {
-	ID       string `gorm:"type:uuid;primary_key;default:uuid_generate_v4()"`
-	Name     string
-	Category string
-	Status   string
-	Stock    int
+	ID        string `gorm:"type:uuid;primary_key;default:uuid_generate_v4()"`
+	CreatedAt *time.Time
+	UpdatedAt *time.Time
+	Name      string
+	Category  string
+	Status    string
+	Stock     int
 }
 
 func (b *Book) BeforeCreate(tx *gorm.DB) (err error) {

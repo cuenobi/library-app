@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"library-service/internal/constant"
-	"library-service/internal/domain/entities"
+	"library-service/internal/domain/model"
 	"library-service/internal/port"
 
 	"golang.org/x/crypto/bcrypt"
@@ -26,7 +26,7 @@ func NewUserService(userRepo port.UserRepository, jwt port.JWT) *UserService {
 // It first checks if the username already exists in the system.
 // If the username does not exist, it will hash the password and create a new user.
 // If the username already exists, it will return an error.
-func (u *UserService) CreateUser(user *entities.User) error {
+func (u *UserService) CreateUser(user *model.User) error {
 	if user.Role != constant.MemberRole {
 		return fmt.Errorf("invalid role")
 	}
@@ -63,7 +63,7 @@ func (u *UserService) CreateUser(user *entities.User) error {
 // It first checks if the username already exists in the system.
 // If the username does not exist, it will hash the password and create a new librarian.
 // If the username already exists, it will return an error.
-func (u *UserService) CreateLibrarian(user *entities.User) error {
+func (u *UserService) CreateLibrarian(user *model.User) error {
 	if user.Role != constant.Librarian {
 		return fmt.Errorf("invalid role")
 	}
