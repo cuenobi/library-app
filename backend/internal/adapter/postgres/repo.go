@@ -43,7 +43,10 @@ func NewPostgres(cfg *PostgresConfig, ctx context.Context) *gorm.DB {
 	return db
 }
 
+// SeedData populates the database with some initial data.
+// The function takes a pointer to the connection as an argument.
 func SeedData(db *gorm.DB) {
+	// Create two users: John Doe (admin) and Jane Doe (user).
 	users := []model.User{
 		{
 			ID:        uuid.New().String(),
@@ -63,15 +66,18 @@ func SeedData(db *gorm.DB) {
 		},
 	}
 
+	// Insert the users into the database. If the username already exists,
+	// updates the existing user with the given data.
 	for _, user := range users {
 		if err := db.Clauses(clause.OnConflict{
-			Columns:   []clause.Column{{Name: "username"}}, //
-			DoUpdates: clause.AssignmentColumns([]string{"username", "password", "name", "role", "created_at"}),
+			Columns:   []clause.Column{{Name: "username"}}, // The conflict should be checked based on the username.
+			DoUpdates: clause.AssignmentColumns([]string{"username", "password", "name", "role", "created_at"}), // The columns that should be updated if a conflict occurs.
 		}).Create(&user).Error; err != nil {
 			panic("failed to seed users: " + err.Error())
 		}
 	}
 
+	// Create two books: "The Go Programming Language" and "Clean Code".
 	books := []model.Book{
 		{
 			Name:      "The Go Programming Language",
@@ -89,10 +95,12 @@ func SeedData(db *gorm.DB) {
 		},
 	}
 
+	// Insert the books into the database. If the book name already exists,
+	// updates the existing book with the given data.
 	for _, book := range books {
 		if err := db.Clauses(clause.OnConflict{
-			Columns:   []clause.Column{{Name: "name"}},
-			DoUpdates: clause.AssignmentColumns([]string{"name", "category", "created_at"}),
+			Columns:   []clause.Column{{Name: "name"}}, // The conflict should be checked based on the book name.
+			DoUpdates: clause.AssignmentColumns([]string{"name", "category", "created_at"}), // The columns that should be updated if a conflict occurs.
 		}).Create(&book).Error; err != nil {
 			panic("failed to seed books: " + err.Error())
 		}
