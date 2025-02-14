@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"library-service/internal/constant"
-	"library-service/internal/domain/model"
+	"library-service/internal/model"
 	"library-service/internal/port"
 
 	"golang.org/x/crypto/bcrypt"

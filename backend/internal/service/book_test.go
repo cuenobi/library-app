@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"library-service/internal/constant"
-	"library-service/internal/domain/model"
+	"library-service/internal/model"
 	"library-service/mocks"
 
 	"github.com/stretchr/testify/mock"

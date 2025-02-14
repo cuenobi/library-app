@@ -3,7 +3,7 @@
 package mocks
 
 import (
-	model "library-service/internal/domain/model"
+	model "library-service/internal/model"
 
 	mock "github.com/stretchr/testify/mock"
 )

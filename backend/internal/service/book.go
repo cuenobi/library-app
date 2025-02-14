@@ -3,7 +3,7 @@ package service
 import (
 	"fmt"
 
-	"library-service/internal/domain/model"
+	"library-service/internal/model"
 	"library-service/internal/port"
 )
 

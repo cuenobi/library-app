@@ -1,6 +1,6 @@
 package port
 
-import "library-service/internal/domain/model"
+import "library-service/internal/model"
 
 type UserRepository interface {
 	HasUsername(username string) (bool, error)
