@@ -1,12 +1,14 @@
 package service
 
 import (
+	"fmt"
 	"testing"
 
 	"library-service/internal/constant"
 	"library-service/internal/domain/model"
 	"library-service/mocks"
 
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -22,23 +24,87 @@ type BookServiceSuite struct {
 	mockBook     *model.Book
 }
 
-func (u *BookServiceSuite) SetupTest() {
-	u.mockBookRepo = *mocks.NewBookRepository(u.T())
-	u.mockJwt = *mocks.NewJWT(u.T())
-	u.mockBook = &model.Book{
+func (b *BookServiceSuite) SetupTest() {
+	b.mockBookRepo = *mocks.NewBookRepository(b.T())
+	b.mockJwt = *mocks.NewJWT(b.T())
+	b.mockBook = &model.Book{
 		Name:     "foo",
 		Category: "scientific",
 		Status:   constant.Available,
 		Stock:    4,
 	}
+	b.service = NewBookService(&b.mockBookRepo)
 }
 
-func (u *BookServiceSuite) TearDownTest() {
-	u.mockBookRepo.AssertExpectations(u.T())
-	u.mockJwt.AssertExpectations(u.T())
+func (b *BookServiceSuite) TearDownTest() {
+	b.mockBookRepo.AssertExpectations(b.T())
+	b.mockJwt.AssertExpectations(b.T())
 }
 
-func (u *BookServiceSuite) SetupSubTest() {
-	u.TearDownTest()
-	u.SetupTest()
+func (b *BookServiceSuite) SetupSubTest() {
+	b.TearDownTest()
+	b.SetupTest()
+}
+
+func (b *BookServiceSuite) TestCreateBookSuccess() {
+	b.mockBookRepo.EXPECT().HasBookName(mock.Anything).Return(false, nil)
+	b.mockBookRepo.EXPECT().CreateBook(mock.Anything).Return(nil)
+
+	err := b.service.CreateBook(b.mockBook)
+	b.Require().NoError(err)
+}
+
+func (b *BookServiceSuite) TestCreateBookHasBookNameError() {
+	b.mockBookRepo.EXPECT().HasBookName(mock.Anything).Return(false, fmt.Errorf(mock.Anything))
+
+	err := b.service.CreateBook(b.mockBook)
+	b.Require().Error(err)
+	b.Require().Equal(mock.Anything, err.Error())
+}
+
+func (b *BookServiceSuite) TestCreateBookAlreadyBookName() {
+	b.mockBookRepo.EXPECT().HasBookName(mock.Anything).Return(true, nil)
+
+	err := b.service.CreateBook(b.mockBook)
+	b.Require().Error(err)
+	b.Require().Equal("book name already exist", err.Error())
+}
+
+func (b *BookServiceSuite) TestCreateBookError() {
+	b.mockBookRepo.EXPECT().HasBookName(mock.Anything).Return(false, nil)
+	b.mockBookRepo.EXPECT().CreateBook(mock.Anything).Return(fmt.Errorf(mock.Anything))
+
+	err := b.service.CreateBook(b.mockBook)
+	b.Require().Error(err)
+	b.Require().Equal(mock.Anything, err.Error())
+}
+
+func (b *BookServiceSuite) TestBorrowSuccess() {
+	b.mockBookRepo.EXPECT().DecreaseBookStock(mock.Anything).Return(nil)
+
+	err := b.service.Borrow("mock")
+	b.Require().NoError(err)
+}
+
+func (b *BookServiceSuite) TestBorrowError() {
+	b.mockBookRepo.EXPECT().DecreaseBookStock(mock.Anything).Return(fmt.Errorf(mock.Anything))
+
+	err := b.service.Borrow("mock")
+	b.Require().Error(err)
+	b.Require().Equal(mock.Anything, err.Error())
+}
+
+func (b *BookServiceSuite) TestReturnSuccess() {
+	b.mockBookRepo.EXPECT().IncreaseBookStock(mock.Anything).Return(nil)
+
+	err := b.service.Return("mock")
+	b.Require().NoError(err)
+}
+
+func (b *BookServiceSuite) TestReturnError() {
+	b.mockBookRepo.EXPECT().IncreaseBookStock(mock.Anything).Return(fmt.Errorf(mock.Anything))
+
+	err := b.service.Return("mock")
+	b.Require().Error(err)
+	b.Require().Equal(mock.Anything, err.Error())
 }
