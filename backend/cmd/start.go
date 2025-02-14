@@ -11,7 +11,10 @@ import (
 	"time"
 
 	"library-service/configs"
+	"library-service/internal/adapter/jwt"
 	"library-service/internal/adapter/postgres"
+	"library-service/internal/handler"
+	"library-service/internal/service"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
@@ -30,9 +33,23 @@ func start(cmd *cobra.Command, args []string) (err error) {
 
 	fmt.Println("App is starting...")
 
-	_ = postgres.NewPostgres(cfg.Postgres, ctx)
+	// init postgres
+	pg := postgres.NewPostgres(cfg.Postgres, ctx)
 
+	// init fiber
 	f := startServer(cfg.ServerConfig.Port, logger, cfg)
+
+	// init user repository
+	userRepo := postgres.NewUser(pg)
+
+	// init jwt adapter
+	jwt := jwt.NewJwtToken(cfg.JwtConfig)
+
+	// init services
+	userService := service.NewUserService(userRepo, jwt)
+
+	// init routes
+	handler.NewRouteUserHandler(f, userService, jwt)
 
 	gracefulShutdown(f, logger)
 

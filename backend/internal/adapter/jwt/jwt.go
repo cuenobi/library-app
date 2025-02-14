@@ -4,6 +4,8 @@ import (
 	"strings"
 	"time"
 
+	"library-service/configs"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -13,9 +15,9 @@ type Jwt struct {
 	Exp       int
 }
 
-func NewJwtToken(cfg Jwt) *Jwt {
+func NewJwtToken(cfg *configs.JwtConfig) *Jwt {
 	return &Jwt{
-		SecretKey: cfg.SecretKey,
+		SecretKey: cfg.Secret,
 		Exp:       cfg.Exp,
 	}
 }
