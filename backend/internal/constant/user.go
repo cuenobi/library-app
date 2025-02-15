@@ -1,6 +1,6 @@
 package constant
 
-var (
+const (
 	MemberRole string = "1"
 	Librarian  string = "2"
 )
