@@ -18,7 +18,7 @@ type BookHandler struct {
 	validator   *validator.Validate
 }
 
-func NewRouteBookHandler(f *fiber.App, bookService port.BookService, jwt port.JWT, validator *validator.Validate) {
+func NewRouteBookHandler(f *fiber.App, bookService port.BookService, jwt port.JWT, validator *validator.Validate) *BookHandler {
 	handler := &BookHandler{
 		fiber:       f,
 		bookService: bookService,
@@ -31,6 +31,8 @@ func NewRouteBookHandler(f *fiber.App, bookService port.BookService, jwt port.JW
 	book.Post("/create", jwt.ValidateLibrarian, handler.CreateBook)
 	book.Post("/borrow/:user_id/:book_id", jwt.ValidateLibrarian, handler.Borrow)
 	book.Post("/return/:user_id/:book_id", jwt.ValidateLibrarian, handler.Return)
+
+	return handler
 }
 
 func (b *BookHandler) GetAllBook(ctx *fiber.Ctx) error {
@@ -69,12 +71,12 @@ func (b *BookHandler) CreateBook(ctx *fiber.Ctx) error {
 		Name:     input.Name,
 		Category: input.Category,
 		Stock:    input.Stock,
-		Status: func(stock int) string {
-			if stock < 1 {
-				return constant.OutOfStock
+		Status: func() string {
+			if input.Stock > 0 {
+				return constant.Available
 			}
-			return constant.Available
-		}(input.Stock),
+			return constant.OutOfStock
+		}(),
 	}
 
 	err := b.bookService.CreateBook(book)

@@ -15,7 +15,7 @@ type UserHandler struct {
 	validator   *validator.Validate
 }
 
-func NewRouteUserHandler(f *fiber.App, userService port.UserService, jwt port.JWT, validator *validator.Validate) {
+func NewRouteUserHandler(f *fiber.App, userService port.UserService, jwt port.JWT, validator *validator.Validate) *UserHandler {
 	handler := &UserHandler{
 		fiber:       f,
 		userService: userService,
@@ -24,11 +24,14 @@ func NewRouteUserHandler(f *fiber.App, userService port.UserService, jwt port.JW
 	}
 
 	f.Post("/login", handler.Login)
+	f.Get("/users", jwt.ValidateLibrarian, handler.GetAllMember)
 	user := f.Group("/user")
 	user.Post("/register", handler.RegisterHandler)
 
 	librarian := f.Group("/librarian")
 	librarian.Post("/register", handler.jwt.Validate)
+
+	return handler
 }
 
 type RegisterBody struct {
@@ -36,6 +39,20 @@ type RegisterBody struct {
 	Password string `json:"password" validate:"required"`
 	Name     string `json:"name" validate:"required"`
 	Role     string `json:"role" validate:"required"`
+}
+
+func (u *UserHandler) GetAllMember(ctx *fiber.Ctx) error {
+	users, err := u.userService.GetAllMember()
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "get users success",
+		"users":   users,
+	})
 }
 
 func (u *UserHandler) RegisterHandler(ctx *fiber.Ctx) error {
