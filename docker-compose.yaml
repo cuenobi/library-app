@@ -30,13 +30,13 @@ services:
     ports:
       - "8080:8080"
 
-  # frontend:
-  #   build: ./frontend
-  #   container_name: nextjs_frontend
-  #   depends_on:
-  #     - backend
-  #   ports:
-  #     - "3000:3000"
+  frontend:
+    build: ./frontend
+    container_name: nextjs_frontend
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
 
 volumes:
   db_data:
