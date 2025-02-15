@@ -67,7 +67,6 @@ func (j *Jwt) Validate(c *fiber.Ctx) error {
 	}
 
 	if claims, ok := token.Claims.(*CustomClaims); ok && token.Valid {
-		// ดึงค่า Username และ Role
 		username := claims.Username
 		role := claims.Role
 
