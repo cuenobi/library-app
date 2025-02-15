@@ -80,31 +80,31 @@ func (b *BookServiceSuite) TestCreateBookError() {
 }
 
 func (b *BookServiceSuite) TestBorrowSuccess() {
-	b.mockBookRepo.EXPECT().DecreaseBookStock(mock.Anything).Return(nil)
+	b.mockBookRepo.EXPECT().DecreaseBookStockAndAddUpdateBorrowDetail(mock.Anything, mock.Anything).Return(nil)
 
-	err := b.service.Borrow("mock")
+	err := b.service.Borrow("mock", mock.Anything)
 	b.Require().NoError(err)
 }
 
 func (b *BookServiceSuite) TestBorrowError() {
-	b.mockBookRepo.EXPECT().DecreaseBookStock(mock.Anything).Return(fmt.Errorf(mock.Anything))
+	b.mockBookRepo.EXPECT().DecreaseBookStockAndAddUpdateBorrowDetail(mock.Anything, mock.Anything).Return(fmt.Errorf(mock.Anything))
 
-	err := b.service.Borrow("mock")
+	err := b.service.Borrow("mock", mock.Anything)
 	b.Require().Error(err)
 	b.Require().Equal(mock.Anything, err.Error())
 }
 
 func (b *BookServiceSuite) TestReturnSuccess() {
-	b.mockBookRepo.EXPECT().IncreaseBookStock(mock.Anything).Return(nil)
+	b.mockBookRepo.EXPECT().IncreaseBookStockAndUpdateBorrowDetail(mock.Anything, mock.Anything).Return(nil)
 
-	err := b.service.Return("mock")
+	err := b.service.Return("mock", mock.Anything)
 	b.Require().NoError(err)
 }
 
 func (b *BookServiceSuite) TestReturnError() {
-	b.mockBookRepo.EXPECT().IncreaseBookStock(mock.Anything).Return(fmt.Errorf(mock.Anything))
+	b.mockBookRepo.EXPECT().IncreaseBookStockAndUpdateBorrowDetail(mock.Anything, mock.Anything).Return(fmt.Errorf(mock.Anything))
 
-	err := b.service.Return("mock")
+	err := b.service.Return("mock", mock.Anything)
 	b.Require().Error(err)
 	b.Require().Equal(mock.Anything, err.Error())
 }

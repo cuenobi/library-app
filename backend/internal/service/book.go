@@ -34,8 +34,8 @@ func (b *BookService) CreateBook(book *model.Book) error {
 	return nil
 }
 
-func (b *BookService) Borrow(bookID string) error {
-	err := b.bookRepo.DecreaseBookStock(bookID)
+func (b *BookService) Borrow(bookID, userID string) error {
+	err := b.bookRepo.DecreaseBookStockAndAddUpdateBorrowDetail(bookID, userID)
 	if err != nil {
 		return err
 	}
@@ -43,8 +43,8 @@ func (b *BookService) Borrow(bookID string) error {
 	return nil
 }
 
-func (b *BookService) Return(bookID string) error {
-	err := b.bookRepo.IncreaseBookStock(bookID)
+func (b *BookService) Return(bookID, userID string) error {
+	err := b.bookRepo.IncreaseBookStockAndUpdateBorrowDetail(bookID, userID)
 	if err != nil {
 		return err
 	}

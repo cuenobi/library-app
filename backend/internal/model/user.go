@@ -23,8 +23,8 @@ type User struct {
 type BorrowDetail struct {
 	gorm.Model
 	BookName   string
-	BorrowedAt *time.Time
-	ReturnedAt *time.Time
+	BorrowedAt int64
+	ReturnedAt *int64
 	User       *User `gorm:"foreignKey:UserID;references:ID"`
 	UserID     string
 }

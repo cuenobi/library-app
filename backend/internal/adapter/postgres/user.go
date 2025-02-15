@@ -30,8 +30,5 @@ func (u *User) CreateUser(user *model.User) error {
 func (u *User) GetUserByUsername(username string) (*model.User, error) {
 	var user *model.User
 	err := u.db.First(&user, "username = ?", username).Error
-	if err != nil {
-		return nil, err
-	}
-	return user, nil
+	return user, err
 }

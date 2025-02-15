@@ -67,17 +67,17 @@ func (_c *BookRepository_CreateBook_Call) RunAndReturn(run func(*model.Book) err
 	return _c
 }
 
-// DecreaseBookStock provides a mock function with given fields: id
-func (_m *BookRepository) DecreaseBookStock(id string) error {
-	ret := _m.Called(id)
+// DecreaseBookStockAndAddUpdateBorrowDetail provides a mock function with given fields: bookID, userID
+func (_m *BookRepository) DecreaseBookStockAndAddUpdateBorrowDetail(bookID string, userID string) error {
+	ret := _m.Called(bookID, userID)
 
 	if len(ret) == 0 {
-		panic("no return value specified for DecreaseBookStock")
+		panic("no return value specified for DecreaseBookStockAndAddUpdateBorrowDetail")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(string) error); ok {
-		r0 = rf(id)
+	if rf, ok := ret.Get(0).(func(string, string) error); ok {
+		r0 = rf(bookID, userID)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -85,30 +85,31 @@ func (_m *BookRepository) DecreaseBookStock(id string) error {
 	return r0
 }
 
-// BookRepository_DecreaseBookStock_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'DecreaseBookStock'
-type BookRepository_DecreaseBookStock_Call struct {
+// BookRepository_DecreaseBookStockAndAddUpdateBorrowDetail_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'DecreaseBookStockAndAddUpdateBorrowDetail'
+type BookRepository_DecreaseBookStockAndAddUpdateBorrowDetail_Call struct {
 	*mock.Call
 }
 
-// DecreaseBookStock is a helper method to define mock.On call
-//   - id string
-func (_e *BookRepository_Expecter) DecreaseBookStock(id interface{}) *BookRepository_DecreaseBookStock_Call {
-	return &BookRepository_DecreaseBookStock_Call{Call: _e.mock.On("DecreaseBookStock", id)}
+// DecreaseBookStockAndAddUpdateBorrowDetail is a helper method to define mock.On call
+//   - bookID string
+//   - userID string
+func (_e *BookRepository_Expecter) DecreaseBookStockAndAddUpdateBorrowDetail(bookID interface{}, userID interface{}) *BookRepository_DecreaseBookStockAndAddUpdateBorrowDetail_Call {
+	return &BookRepository_DecreaseBookStockAndAddUpdateBorrowDetail_Call{Call: _e.mock.On("DecreaseBookStockAndAddUpdateBorrowDetail", bookID, userID)}
 }
 
-func (_c *BookRepository_DecreaseBookStock_Call) Run(run func(id string)) *BookRepository_DecreaseBookStock_Call {
+func (_c *BookRepository_DecreaseBookStockAndAddUpdateBorrowDetail_Call) Run(run func(bookID string, userID string)) *BookRepository_DecreaseBookStockAndAddUpdateBorrowDetail_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(string))
+		run(args[0].(string), args[1].(string))
 	})
 	return _c
 }
 
-func (_c *BookRepository_DecreaseBookStock_Call) Return(_a0 error) *BookRepository_DecreaseBookStock_Call {
+func (_c *BookRepository_DecreaseBookStockAndAddUpdateBorrowDetail_Call) Return(_a0 error) *BookRepository_DecreaseBookStockAndAddUpdateBorrowDetail_Call {
 	_c.Call.Return(_a0)
 	return _c
 }
 
-func (_c *BookRepository_DecreaseBookStock_Call) RunAndReturn(run func(string) error) *BookRepository_DecreaseBookStock_Call {
+func (_c *BookRepository_DecreaseBookStockAndAddUpdateBorrowDetail_Call) RunAndReturn(run func(string, string) error) *BookRepository_DecreaseBookStockAndAddUpdateBorrowDetail_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -227,17 +228,17 @@ func (_c *BookRepository_HasBookName_Call) RunAndReturn(run func(string) (bool, 
 	return _c
 }
 
-// IncreaseBookStock provides a mock function with given fields: id
-func (_m *BookRepository) IncreaseBookStock(id string) error {
-	ret := _m.Called(id)
+// IncreaseBookStockAndUpdateBorrowDetail provides a mock function with given fields: bookID, userID
+func (_m *BookRepository) IncreaseBookStockAndUpdateBorrowDetail(bookID string, userID string) error {
+	ret := _m.Called(bookID, userID)
 
 	if len(ret) == 0 {
-		panic("no return value specified for IncreaseBookStock")
+		panic("no return value specified for IncreaseBookStockAndUpdateBorrowDetail")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(string) error); ok {
-		r0 = rf(id)
+	if rf, ok := ret.Get(0).(func(string, string) error); ok {
+		r0 = rf(bookID, userID)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -245,30 +246,31 @@ func (_m *BookRepository) IncreaseBookStock(id string) error {
 	return r0
 }
 
-// BookRepository_IncreaseBookStock_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'IncreaseBookStock'
-type BookRepository_IncreaseBookStock_Call struct {
+// BookRepository_IncreaseBookStockAndUpdateBorrowDetail_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'IncreaseBookStockAndUpdateBorrowDetail'
+type BookRepository_IncreaseBookStockAndUpdateBorrowDetail_Call struct {
 	*mock.Call
 }
 
-// IncreaseBookStock is a helper method to define mock.On call
-//   - id string
-func (_e *BookRepository_Expecter) IncreaseBookStock(id interface{}) *BookRepository_IncreaseBookStock_Call {
-	return &BookRepository_IncreaseBookStock_Call{Call: _e.mock.On("IncreaseBookStock", id)}
+// IncreaseBookStockAndUpdateBorrowDetail is a helper method to define mock.On call
+//   - bookID string
+//   - userID string
+func (_e *BookRepository_Expecter) IncreaseBookStockAndUpdateBorrowDetail(bookID interface{}, userID interface{}) *BookRepository_IncreaseBookStockAndUpdateBorrowDetail_Call {
+	return &BookRepository_IncreaseBookStockAndUpdateBorrowDetail_Call{Call: _e.mock.On("IncreaseBookStockAndUpdateBorrowDetail", bookID, userID)}
 }
 
-func (_c *BookRepository_IncreaseBookStock_Call) Run(run func(id string)) *BookRepository_IncreaseBookStock_Call {
+func (_c *BookRepository_IncreaseBookStockAndUpdateBorrowDetail_Call) Run(run func(bookID string, userID string)) *BookRepository_IncreaseBookStockAndUpdateBorrowDetail_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(string))
+		run(args[0].(string), args[1].(string))
 	})
 	return _c
 }
 
-func (_c *BookRepository_IncreaseBookStock_Call) Return(_a0 error) *BookRepository_IncreaseBookStock_Call {
+func (_c *BookRepository_IncreaseBookStockAndUpdateBorrowDetail_Call) Return(_a0 error) *BookRepository_IncreaseBookStockAndUpdateBorrowDetail_Call {
 	_c.Call.Return(_a0)
 	return _c
 }
 
-func (_c *BookRepository_IncreaseBookStock_Call) RunAndReturn(run func(string) error) *BookRepository_IncreaseBookStock_Call {
+func (_c *BookRepository_IncreaseBookStockAndUpdateBorrowDetail_Call) RunAndReturn(run func(string, string) error) *BookRepository_IncreaseBookStockAndUpdateBorrowDetail_Call {
 	_c.Call.Return(run)
 	return _c
 }
