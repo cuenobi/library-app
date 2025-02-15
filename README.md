@@ -41,8 +41,7 @@ Copy the .env.example file (if available) and rename it to .env. Update the envi
     ```bash
     docker-compose up --build
 
-4.  Wait for the containers to initialize. The backend will be available at http://localhost:8080, and the frontend will be available at http://localhost:3000.
-
+4.  Wait for the containers to initialize. The backend will be available at http://localhost:8080, and the frontend will be available at http://localhost:3000. 
 Stopping the Application
     ```bash
     docker-compose down
