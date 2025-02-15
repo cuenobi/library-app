@@ -16,6 +16,7 @@ import (
 	"library-service/internal/handler"
 	"library-service/internal/service"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
@@ -37,7 +38,7 @@ func start(cmd *cobra.Command, args []string) (err error) {
 	pg := postgres.NewPostgres(cfg.Postgres, ctx)
 
 	// seeding
-	postgres.SeedData(pg)
+	postgres.SeedData(cfg.Postgres, pg)
 
 	// init fiber
 	f := startServer(cfg.ServerConfig.Port, logger, cfg)
@@ -51,8 +52,10 @@ func start(cmd *cobra.Command, args []string) (err error) {
 	// init services
 	userService := service.NewUserService(userRepo, jwt)
 
+	validate := validator.New()
+
 	// init routes
-	handler.NewRouteUserHandler(f, userService, jwt)
+	handler.NewRouteUserHandler(f, userService, jwt, validate)
 
 	gracefulShutdown(f, logger)
 

@@ -10,17 +10,19 @@ import (
 	"library-service/internal/model"
 
 	"github.com/google/uuid"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
 type PostgresConfig struct {
-	Host     string
-	Port     string
-	Name     string
-	Username string
-	Password string
+	Host         string
+	Port         string
+	Name         string
+	Username     string
+	Password     string
+	SeedPassword string
 }
 
 // NewPostgres creates a new connection to the PostgreSQL database.
@@ -45,23 +47,27 @@ func NewPostgres(cfg *PostgresConfig, ctx context.Context) *gorm.DB {
 
 // SeedData populates the database with some initial data.
 // The function takes a pointer to the connection as an argument.
-func SeedData(db *gorm.DB) {
+func SeedData(cfg *PostgresConfig, db *gorm.DB) {
+	// Hash password
+	password := cfg.SeedPassword
+	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+
 	// Create two users: John Doe (admin) and Jane Doe (user).
 	users := []model.User{
 		{
 			ID:        uuid.New().String(),
 			Username:  "john_doe",
-			Password:  "password123",
+			Password:  string(hashedPassword),
 			Name:      "John Doe",
-			Role:      "admin",
+			Role:      constant.Librarian,
 			CreatedAt: func(t time.Time) *time.Time { return &t }(time.Now()),
 		},
 		{
 			ID:        uuid.New().String(),
 			Username:  "jane_doe",
-			Password:  "password123",
+			Password:  string(hashedPassword),
 			Name:      "Jane Doe",
-			Role:      "user",
+			Role:      constant.MemberRole,
 			CreatedAt: func(t time.Time) *time.Time { return &t }(time.Now()),
 		},
 	}
@@ -70,7 +76,7 @@ func SeedData(db *gorm.DB) {
 	// updates the existing user with the given data.
 	for _, user := range users {
 		if err := db.Clauses(clause.OnConflict{
-			Columns:   []clause.Column{{Name: "username"}}, // The conflict should be checked based on the username.
+			Columns:   []clause.Column{{Name: "username"}},                                                      // The conflict should be checked based on the username.
 			DoUpdates: clause.AssignmentColumns([]string{"username", "password", "name", "role", "created_at"}), // The columns that should be updated if a conflict occurs.
 		}).Create(&user).Error; err != nil {
 			panic("failed to seed users: " + err.Error())
@@ -99,7 +105,7 @@ func SeedData(db *gorm.DB) {
 	// updates the existing book with the given data.
 	for _, book := range books {
 		if err := db.Clauses(clause.OnConflict{
-			Columns:   []clause.Column{{Name: "name"}}, // The conflict should be checked based on the book name.
+			Columns:   []clause.Column{{Name: "name"}},                                      // The conflict should be checked based on the book name.
 			DoUpdates: clause.AssignmentColumns([]string{"name", "category", "created_at"}), // The columns that should be updated if a conflict occurs.
 		}).Create(&book).Error; err != nil {
 			panic("failed to seed books: " + err.Error())

@@ -9,6 +9,7 @@ CONNECTION:
     USERNAME: "admin"
     PASSWORD: "password"
     NAME: "library"
+    SEED_PASSWORD: "password123"
 
 JWT:
   SECRET_KEY: "secret"

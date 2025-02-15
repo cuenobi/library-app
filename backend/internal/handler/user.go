@@ -4,6 +4,7 @@ import (
 	"library-service/internal/model"
 	"library-service/internal/port"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -11,15 +12,18 @@ type UserHandler struct {
 	fiber       *fiber.App
 	userService port.UserService
 	jwt         port.JWT
+	validator   *validator.Validate
 }
 
-func NewRouteUserHandler(f *fiber.App, userService port.UserService, jwt port.JWT) {
+func NewRouteUserHandler(f *fiber.App, userService port.UserService, jwt port.JWT, validator *validator.Validate) {
 	handler := &UserHandler{
 		fiber:       f,
 		userService: userService,
 		jwt:         jwt,
+		validator:   validator,
 	}
 
+	f.Post("/login", handler.Login)
 	user := f.Group("/user")
 	user.Post("/register", handler.RegisterHandler)
 
@@ -28,16 +32,22 @@ func NewRouteUserHandler(f *fiber.App, userService port.UserService, jwt port.JW
 }
 
 type RegisterBody struct {
-	Username *string `json:"username"`
-	Password *string `json:"password"`
-	Name     *string `json:"name"`
-	Role     *string `json:"role"`
+	Username *string `json:"username" validate:"required"`
+	Password *string `json:"password" validate:"required"`
+	Name     *string `json:"name" validate:"required"`
+	Role     *string `json:"role" validate:"required"`
 }
 
 func (u *UserHandler) RegisterHandler(ctx *fiber.Ctx) error {
 	var input RegisterBody
 	if err := ctx.BodyParser(&input); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(err.Error())
+	}
+
+	if err := u.validator.Struct(input); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
 	}
 
 	user := &model.User{
@@ -55,5 +65,35 @@ func (u *UserHandler) RegisterHandler(ctx *fiber.Ctx) error {
 
 	return ctx.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"message": "register success",
+	})
+}
+
+type LoginBody struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+func (u *UserHandler) Login(ctx *fiber.Ctx) error {
+	var input LoginBody
+	if err := ctx.BodyParser(&input); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(err.Error())
+	}
+
+	if err := u.validator.Struct(input); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	token, err := u.userService.Authentication(input.Username, input.Password)
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+		"token":   token,
+		"message": "login success",
 	})
 }

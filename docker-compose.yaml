@@ -26,6 +26,7 @@ services:
       DB_USER: admin
       DB_PASSWORD: password
       DB_NAME: library
+      DB_SEED_PASSWORD: password123
     ports:
       - "8080:8080"
 

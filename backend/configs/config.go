@@ -78,19 +78,21 @@ func loadConfig() *Config {
 	var PostGresConfig *postgres.PostgresConfig
 	if isDocker {
 		PostGresConfig = &postgres.PostgresConfig{
-			Host:     viper.GetString("DB_HOST"),
-			Port:     viper.GetString("DB_PORT"),
-			Name:     viper.GetString("DB_NAME"),
-			Username: viper.GetString("DB_USER"),
-			Password: viper.GetString("DB_PASSWORD"),
+			Host:         viper.GetString("DB_HOST"),
+			Port:         viper.GetString("DB_PORT"),
+			Name:         viper.GetString("DB_NAME"),
+			Username:     viper.GetString("DB_USER"),
+			Password:     viper.GetString("DB_PASSWORD"),
+			SeedPassword: viper.GetString("DB_SEED_PASSWORD"),
 		}
 	} else {
 		PostGresConfig = &postgres.PostgresConfig{
-			Host:     viper.GetString("CONNECTION.POSTGRES.HOST"),
-			Port:     viper.GetString("CONNECTION.POSTGRES.PORT"),
-			Name:     viper.GetString("CONNECTION.POSTGRES.NAME"),
-			Username: viper.GetString("CONNECTION.POSTGRES.USERNAME"),
-			Password: viper.GetString("CONNECTION.POSTGRES.PASSWORD"),
+			Host:         viper.GetString("CONNECTION.POSTGRES.HOST"),
+			Port:         viper.GetString("CONNECTION.POSTGRES.PORT"),
+			Name:         viper.GetString("CONNECTION.POSTGRES.NAME"),
+			Username:     viper.GetString("CONNECTION.POSTGRES.USERNAME"),
+			Password:     viper.GetString("CONNECTION.POSTGRES.PASSWORD"),
+			SeedPassword: viper.GetString("CONNECTION.POSTGRES.SEED_PASSWORD"),
 		}
 	}
 

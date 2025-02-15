@@ -110,6 +110,9 @@ func (u *UserService) Authentication(username, password string) (string, error) 
 
 	// Compare the provided password with the hashed password in the database
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
+		if err.Error() == "crypto/bcrypt: hashedPassword is not the hash of the given password" {
+			return "", fmt.Errorf("invalid credential")
+		}
 		return "", err
 	}
 
