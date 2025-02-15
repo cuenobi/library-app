@@ -18,6 +18,15 @@ func NewBook(db *gorm.DB) *Book {
 	}
 }
 
+func (b *Book) GetAllBook() ([]*model.Book, error) {
+	var books []*model.Book
+	err := b.db.Model(&model.Book{}).First(books).Error
+	if err != nil {
+		return nil, err
+	}
+	return books, nil
+}
+
 func (b *Book) HasBookName(name string) (bool, error) {
 	var count int64
 	b.db.Model(&model.Book{}).Where("name = ?", name).Count(&count)
@@ -85,8 +94,15 @@ func (b *Book) IncreaseBookStockAndUpdateBorrowDetail(bookID, userID string) err
 		return err
 	}
 
+	var borrowDetail model.BorrowDetail
+	err = tx.First(&borrowDetail, "book_id = ? AND user_id = ?", book.ID, userID).Error
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
 	err = tx.Model(&model.BorrowDetail{}).
-		Where("name = ?", book.Name).
+		Where("name = ? AND user_id = ?", book.ID, userID).
 		Update("returned_at", time.Now().Unix()).Error
 	if err != nil {
 		tx.Rollback()

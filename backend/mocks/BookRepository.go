@@ -114,6 +114,63 @@ func (_c *BookRepository_DecreaseBookStockAndAddUpdateBorrowDetail_Call) RunAndR
 	return _c
 }
 
+// GetAllBook provides a mock function with no fields
+func (_m *BookRepository) GetAllBook() ([]*model.Book, error) {
+	ret := _m.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetAllBook")
+	}
+
+	var r0 []*model.Book
+	var r1 error
+	if rf, ok := ret.Get(0).(func() ([]*model.Book, error)); ok {
+		return rf()
+	}
+	if rf, ok := ret.Get(0).(func() []*model.Book); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]*model.Book)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// BookRepository_GetAllBook_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetAllBook'
+type BookRepository_GetAllBook_Call struct {
+	*mock.Call
+}
+
+// GetAllBook is a helper method to define mock.On call
+func (_e *BookRepository_Expecter) GetAllBook() *BookRepository_GetAllBook_Call {
+	return &BookRepository_GetAllBook_Call{Call: _e.mock.On("GetAllBook")}
+}
+
+func (_c *BookRepository_GetAllBook_Call) Run(run func()) *BookRepository_GetAllBook_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *BookRepository_GetAllBook_Call) Return(_a0 []*model.Book, _a1 error) *BookRepository_GetAllBook_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *BookRepository_GetAllBook_Call) RunAndReturn(run func() ([]*model.Book, error)) *BookRepository_GetAllBook_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // GetBookByID provides a mock function with given fields: id
 func (_m *BookRepository) GetBookByID(id string) (*model.Book, error) {
 	ret := _m.Called(id)

@@ -27,6 +27,7 @@ type BorrowDetail struct {
 	ReturnedAt *int64
 	User       *User `gorm:"foreignKey:UserID;references:ID"`
 	UserID     string
+	BookID     string
 }
 
 func (u *User) BeforeCreate(tx *gorm.DB) (err error) {

@@ -51,3 +51,12 @@ func (b *BookService) Return(bookID, userID string) error {
 
 	return nil
 }
+
+func (b *BookService) GetAllBook() ([]*model.Book, error) {
+	books, err := b.bookRepo.GetAllBook()
+	if err != nil {
+		return nil, err
+	}
+
+	return books, nil
+}

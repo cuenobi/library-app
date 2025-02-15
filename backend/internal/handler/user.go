@@ -32,10 +32,10 @@ func NewRouteUserHandler(f *fiber.App, userService port.UserService, jwt port.JW
 }
 
 type RegisterBody struct {
-	Username *string `json:"username" validate:"required"`
-	Password *string `json:"password" validate:"required"`
-	Name     *string `json:"name" validate:"required"`
-	Role     *string `json:"role" validate:"required"`
+	Username string `json:"username" validate:"required"`
+	Password string `json:"password" validate:"required"`
+	Name     string `json:"name" validate:"required"`
+	Role     string `json:"role" validate:"required"`
 }
 
 func (u *UserHandler) RegisterHandler(ctx *fiber.Ctx) error {
@@ -51,10 +51,10 @@ func (u *UserHandler) RegisterHandler(ctx *fiber.Ctx) error {
 	}
 
 	user := &model.User{
-		Username: *input.Username,
-		Password: *input.Password,
-		Name:     *input.Name,
-		Role:     *input.Role,
+		Username: input.Username,
+		Password: input.Password,
+		Name:     input.Name,
+		Role:     input.Role,
 	}
 
 	if err := u.userService.CreateUser(user); err != nil {

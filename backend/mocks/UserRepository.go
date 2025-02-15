@@ -67,6 +67,63 @@ func (_c *UserRepository_CreateUser_Call) RunAndReturn(run func(*model.User) err
 	return _c
 }
 
+// GetAllMember provides a mock function with no fields
+func (_m *UserRepository) GetAllMember() ([]*model.User, error) {
+	ret := _m.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetAllMember")
+	}
+
+	var r0 []*model.User
+	var r1 error
+	if rf, ok := ret.Get(0).(func() ([]*model.User, error)); ok {
+		return rf()
+	}
+	if rf, ok := ret.Get(0).(func() []*model.User); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]*model.User)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// UserRepository_GetAllMember_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetAllMember'
+type UserRepository_GetAllMember_Call struct {
+	*mock.Call
+}
+
+// GetAllMember is a helper method to define mock.On call
+func (_e *UserRepository_Expecter) GetAllMember() *UserRepository_GetAllMember_Call {
+	return &UserRepository_GetAllMember_Call{Call: _e.mock.On("GetAllMember")}
+}
+
+func (_c *UserRepository_GetAllMember_Call) Run(run func()) *UserRepository_GetAllMember_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *UserRepository_GetAllMember_Call) Return(_a0 []*model.User, _a1 error) *UserRepository_GetAllMember_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *UserRepository_GetAllMember_Call) RunAndReturn(run func() ([]*model.User, error)) *UserRepository_GetAllMember_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // GetUserByUsername provides a mock function with given fields: username
 func (_m *UserRepository) GetUserByUsername(username string) (*model.User, error) {
 	ret := _m.Called(username)

@@ -121,3 +121,12 @@ func (u *UserService) Authentication(username, password string) (string, error) 
 
 	return token, nil
 }
+
+func (u *UserService) GetAllMember() ([]*model.User, error) {
+	users, err := u.userRepo.GetAllMember()
+	if err != nil {
+		return nil, err
+	}
+
+	return users, nil
+}

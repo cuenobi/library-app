@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"library-service/configs"
+	"library-service/internal/constant"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
@@ -55,7 +56,7 @@ func (j *Jwt) Validate(c *fiber.Ctx) error {
 	}
 
 	tokenString := strings.TrimPrefix(authHeader, "Bearer ")
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(j.SecretKey), nil
 	})
 
@@ -63,6 +64,51 @@ func (j *Jwt) Validate(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"error": "Invalid token",
 		})
+	}
+
+	if claims, ok := token.Claims.(*CustomClaims); ok && token.Valid {
+		// ดึงค่า Username และ Role
+		username := claims.Username
+		role := claims.Role
+
+		c.Locals("username", username)
+		c.Locals("role", role)
+	}
+
+	return c.Next()
+}
+
+func (j *Jwt) ValidateLibrarian(c *fiber.Ctx) error {
+	authHeader := c.Get("Authorization")
+	if authHeader == "" {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": "Unauthorized",
+		})
+	}
+
+	tokenString := strings.TrimPrefix(authHeader, "Bearer ")
+	token, err := jwt.ParseWithClaims(tokenString, &CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
+		return []byte(j.SecretKey), nil
+	})
+
+	if err != nil || !token.Valid {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": "Invalid token",
+		})
+	}
+
+	if claims, ok := token.Claims.(*CustomClaims); ok && token.Valid {
+		username := claims.Username
+		role := claims.Role
+
+		if role != constant.Librarian {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"error": "Invalid permission",
+			})
+		}
+
+		c.Locals("username", username)
+		c.Locals("role", role)
 	}
 
 	return c.Next()
