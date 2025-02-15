@@ -86,8 +86,8 @@ func (u *UserHandler) RegisterHandler(ctx *fiber.Ctx) error {
 }
 
 type LoginBody struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
+	Username string `json:"username" validate:"required"`
+	Password string `json:"password" validate:"required"`
 }
 
 func (u *UserHandler) Login(ctx *fiber.Ctx) error {
