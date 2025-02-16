@@ -5,18 +5,17 @@ import {
   ProFormText,
 } from "@ant-design/pro-components";
 import { theme, Button, ConfigProvider } from "antd";
-import { useForm } from "antd/es/form/Form"; // นำเข้า useForm
+import { useForm } from "antd/es/form/Form";
 
 export default () => {
   const { token } = theme.useToken();
-  const [form] = useForm(); // สร้างฟอร์ม
+  const [form] = useForm();
 
   const handleSubmit = (values: any) => {
-    console.log(values); // คุณสามารถจัดการข้อมูลล็อคอินที่นี่
+    console.log(values);
   };
 
   return (
-    // Wrap your component with ConfigProvider for dynamic theme support
     <ConfigProvider theme={{ token }}>
       <ProConfigProvider hashed={false}>
         <div style={{ backgroundColor: token.colorBgContainer }}>
@@ -26,7 +25,7 @@ export default () => {
             subTitle="Member Register"
             onFinish={handleSubmit}
             submitter={false}
-            form={form} // เพิ่ม form ใน LoginForm
+            form={form}
           >
             <ProFormText
               name="username"
@@ -89,7 +88,7 @@ export default () => {
                 prefix: <IdcardOutlined className={"prefixIcon"} />,
                 autoFocus: true,
               }}
-              placeholder={"Name"}
+              placeholder={"full name"}
               rules={[
                 {
                   required: true,

@@ -11,6 +11,7 @@ const { Header } = Layout;
 
 const Navbar: React.FC = () => {
   const [open, setOpen] = useState<boolean>(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const pathname = usePathname();
 
   const toggleDrawer = () => {
@@ -18,16 +19,33 @@ const Navbar: React.FC = () => {
   };
 
   useEffect(() => {
+    const checkAuth = () => {
+      const authUser = localStorage.getItem("authToken");
+      setIsAuthenticated(!!authUser);
+    };
+
+    checkAuth();
+
+    window.addEventListener("storage", checkAuth);
+
+    return () => {
+      window.removeEventListener("storage", checkAuth);
+    };
+  }, []);
+
+  useEffect(() => {
     setOpen(false);
   }, [pathname]);
+
+  if (!isAuthenticated) return null;
 
   return (
     <Header className="fixed top-0 left-0 w-full z-50 bg-white shadow-md">
       <div className="flex justify-between items-center px-6">
         <a href="/" style={{ textDecoration: "none", color: "inherit" }}>
           <div className="flex items-center">
-            <img src="./open-book.png" alt="" className="h-8 mr-2" />{" "}
-            <h3 className="text-xl font-bold">Library</h3>{" "}
+            <img src="./open-book.png" alt="" className="h-8 mr-2" />
+            <h3 className="text-xl font-bold">Library</h3>
           </div>
         </a>
 

@@ -1,15 +1,22 @@
-// src/components/forms/LoginForm.tsx
+"use client";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import {
-  LoginForm,
-  ProConfigProvider,
-  ProFormText,
-} from "@ant-design/pro-components";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { LoginForm } from "@ant-design/pro-components";
 import { Button, Form, Input, Checkbox, message } from "antd";
 import { useAuth } from "../../hooks/useAuth";
 
 export default () => {
   const { login } = useAuth();
+  const router = useRouter();
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+
+  const handleRegister = (
+    e: React.MouseEvent<HTMLAnchorElement, MouseEvent>
+  ) => {
+    e.preventDefault();
+    router.push("/register");
+  };
 
   const handleSubmit = async (values: {
     username: string;
@@ -20,8 +27,13 @@ export default () => {
     const success = await login(username, password);
     if (success) {
       message.success("Login successful!");
-      // ถ้าล็อกอินสำเร็จ, สามารถนำไปยังหน้าอื่นๆ เช่น dashboard
-      // router.push("/dashboard");
+
+      localStorage.setItem("username", username);
+
+      setIsAuthenticated(true);
+      window.dispatchEvent(new Event("storage"));
+
+      router.push("/register");
     } else {
       message.error("Login failed! Please check your credentials.");
     }
@@ -30,9 +42,9 @@ export default () => {
   return (
     <LoginForm
       logo="./group.png"
-      title="Member"
-      subTitle="Member Register"
-      name="login"
+      title="Signin"
+      subTitle=" "
+      name="signin"
       onFinish={handleSubmit}
       layout="vertical"
       initialValues={{ remember: true }}
@@ -56,7 +68,19 @@ export default () => {
         />
       </Form.Item>
       <Form.Item name="remember" valuePropName="checked">
-        <Checkbox>Remember me</Checkbox>
+        <div>
+          <Checkbox>Remember me</Checkbox>
+          <a
+            style={{
+              float: "right",
+              color: "#1890ff",
+            }}
+            href="/register"
+            onClick={handleRegister}
+          >
+            Don't have an account
+          </a>
+        </div>
       </Form.Item>
       <Form.Item>
         <Button type="primary" htmlType="submit" style={{ width: "100%" }}>

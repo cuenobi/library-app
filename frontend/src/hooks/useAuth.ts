@@ -1,4 +1,3 @@
-// src/hooks/useAuth.ts
 import { useState } from "react";
 import { loginUser } from "../features/authService";
 import { AuthResponse } from "../types/auth";

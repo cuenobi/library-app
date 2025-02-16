@@ -2,7 +2,7 @@
 import axios from "axios";
 import { AuthResponse } from "../types/auth";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://your-api-url";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
 export const loginUser = async (
   username: string,
