@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { Layout } from "antd";
-import FormLogin from "@/components/Login/FormLogin";
+import FormRegister from "@/components/Register/FormRegister";
 
 const { Content } = Layout;
 
@@ -17,7 +17,7 @@ export default function Page() {
             borderRadius: 8,
           }}
         >
-          <FormLogin/>
+          <FormRegister />
         </div>
       </Content>
     </Layout>

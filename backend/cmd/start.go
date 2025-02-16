@@ -18,6 +18,7 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/spf13/cobra"
@@ -72,6 +73,8 @@ func startServer(port string, slog *slog.Logger, cfg *configs.Config) *fiber.App
 		JSONEncoder: json.Marshal,
 		JSONDecoder: json.Unmarshal,
 	})
+
+	f.Use(cors.New())
 
 	f.Use(recover.New(recover.Config{
 		EnableStackTrace: cfg.ServerConfig.EnableStackTrace,
