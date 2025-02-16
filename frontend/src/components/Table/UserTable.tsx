@@ -1,83 +1,94 @@
-import React from "react";
-import { Space, Table, Tag } from "antd";
+import React, { useEffect, useState } from "react";
+import { Table, Button, Space } from "antd";
+import { SwapRightOutlined, SwapLeftOutlined } from "@ant-design/icons";
+import axios from "axios";
 
-const { Column, ColumnGroup } = Table;
+const { Column } = Table;
 
-interface DataType {
-  key: React.Key;
-  firstName: string;
-  lastName: string;
-  age: number;
-  address: string;
-  tags: string[];
+interface UserData {
+  key: string;
+  created_at: string;
+  username: string;
+  name: string;
 }
 
-const data: DataType[] = [
-  {
-    key: "1",
-    firstName: "John",
-    lastName: "Brown",
-    age: 32,
-    address: "New York No. 1 Lake Park",
-    tags: ["nice", "developer"],
-  },
-  {
-    key: "2",
-    firstName: "Jim",
-    lastName: "Green",
-    age: 42,
-    address: "London No. 1 Lake Park",
-    tags: ["loser"],
-  },
-  {
-    key: "3",
-    firstName: "Joe",
-    lastName: "Black",
-    age: 32,
-    address: "Sydney No. 1 Lake Park",
-    tags: ["cool", "teacher"],
-  },
-];
+const App: React.FC = () => {
+  const [data, setData] = useState<UserData[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string>("");
 
-const App: React.FC = () => (
-  <Table<DataType> dataSource={data}>
-    <ColumnGroup title="Members">
-      <Column title="First Name" dataIndex="firstName" key="firstName" />
-      <Column title="Last Name" dataIndex="lastName" key="lastName" />
-    </ColumnGroup>
-    <Column title="Age" dataIndex="age" key="age" />
-    <Column title="Address" dataIndex="address" key="address" />
-    <Column
-      title="Tags"
-      dataIndex="tags"
-      key="tags"
-      render={(tags: string[]) => (
-        <>
-          {tags.map((tag) => {
-            let color = tag.length > 5 ? "geekblue" : "green";
-            if (tag === "loser") {
-              color = "volcano";
-            }
-            return (
-              <Tag color={color} key={tag}>
-                {tag.toUpperCase()}
-              </Tag>
-            );
-          })}
-        </>
-      )}
-    />
-    <Column
-      title="Action"
-      key="action"
-      render={(_: any, record: DataType) => (
-        <Space size="middle">
-          <a>Invite {record.lastName}</a>
-          <a>Delete</a>
-        </Space>
-      )}
-    />
-  </Table>
-);
+  // ฟังก์ชันนี้จะดึง token จาก localStorage
+  const getAuthToken = () => {
+    return localStorage.getItem("authToken");
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = getAuthToken(); // ดึง token
+        if (!token) {
+          setError("No authorization token found.");
+          setLoading(false);
+          return;
+        }
+
+        // ส่ง request พร้อมกับ token ใน header
+        const response = await axios.get("http://localhost:8080/users", {
+          headers: {
+            Authorization: `Bearer ${token}`, // เพิ่ม Bearer token ใน header
+          },
+        });
+
+        const users = response.data.users.map((user: any) => ({
+          key: user.ID, // ใช้ `ID` เป็น key
+          created_at: user.CreatedAt, // ใช้ `CreatedAt` ในการแสดงวันที่
+          username: user.Username, // ใช้ `Username`
+          name: user.Name, // ใช้ `Name`
+        }));
+
+        setData(users);
+        setLoading(false);
+      } catch (err) {
+        setError("Failed to fetch users");
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
+
+  return (
+    <Table dataSource={data}>
+      <Column title="Created At" dataIndex="created_at" key="created_at" />
+      <Column title="Username" dataIndex="username" key="username" />
+      <Column title="Name" dataIndex="name" key="name" />
+      <Column
+        title="Action"
+        key="action"
+        render={(_: any, record: UserData) => (
+          <Space size="middle">
+            <Button
+              type="primary"
+              shape="round"
+              icon={<SwapRightOutlined />}
+            >
+              Borrow
+            </Button>
+            <Button
+              type="primary"
+              shape="round"
+              icon={<SwapLeftOutlined />}
+            >
+              Return
+            </Button>
+          </Space>
+        )}
+      />
+    </Table>
+  );
+};
 
 export default App;

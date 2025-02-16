@@ -26,7 +26,6 @@ export default () => {
     const { success, role } = await login(username, password);
 
     if (success) {
-      message.success("Login successful!");
       window.dispatchEvent(new Event("storage"));
       localStorage.setItem("username", username);
       if (role) {
@@ -39,7 +38,6 @@ export default () => {
         router.push("/home");
       }
     } else {
-      message.error("Login failed! Please check your credentials.");
     }
   };
 
