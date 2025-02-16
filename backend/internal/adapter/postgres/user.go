@@ -21,6 +21,7 @@ func (u *User) GetAllMember() ([]*model.User, error) {
 	var users []*model.User
 	err := u.db.Model(&model.User{}).
 		Where("role = ?", constant.MemberRole).
+		Preload("BorrowDetails").
 		Find(&users).Error
 	if err != nil {
 		return nil, err

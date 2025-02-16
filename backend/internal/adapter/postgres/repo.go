@@ -111,4 +111,34 @@ func SeedData(cfg *PostgresConfig, db *gorm.DB) {
 			panic("failed to seed books: " + err.Error())
 		}
 	}
+
+	// Add BorrowDetails for jane_doe
+	// Assuming you have already inserted jane_doe into the database and retrieved her ID (e.g., `jane_doe_id`)
+	var janeDoe model.User
+	if err := db.Where("username = ?", "jane_doe").First(&janeDoe).Error; err != nil {
+		panic("failed to find jane_doe user: " + err.Error())
+	}
+
+	// BorrowDetails for jane_doe
+	borrowDetails := []model.BorrowDetail{
+		{
+			BookName:   "The Go Programming Language",
+			BorrowedAt: time.Now().Unix(),
+			UserID:     janeDoe.ID,
+			BookID:     "book_id_go_programming", // Assuming you have a way to link this with the book
+		},
+		{
+			BookName:   "Clean Code",
+			BorrowedAt: time.Now().Unix(),
+			UserID:     janeDoe.ID,
+			BookID:     "book_id_clean_code", // Assuming you have a way to link this with the book
+		},
+	}
+
+	// Insert BorrowDetails for jane_doe
+	for _, borrow := range borrowDetails {
+		if err := db.Create(&borrow).Error; err != nil {
+			panic("failed to seed borrow details: " + err.Error())
+		}
+	}
 }
