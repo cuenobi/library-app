@@ -1,11 +1,11 @@
 "use client";
 import React from "react";
 import { Layout } from "antd";
-import FormRegister from "@/components/Register/FormRegister";
+import UserTable from "@/components/Table/UserTable";
 
 const { Content } = Layout;
 
-export default function Register() {
+export default function Dashboard() {
   return (
     <Layout>
       <Content style={{ padding: "24px 48px" }}>
@@ -17,7 +17,7 @@ export default function Register() {
             borderRadius: 8,
           }}
         >
-          <FormRegister />
+          <UserTable />
         </div>
       </Content>
     </Layout>
