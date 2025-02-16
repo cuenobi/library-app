@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { loginUser } from "../features/authService";
 import { AuthResponse } from "../types/auth";
+import { message } from "antd";
 
 export const useAuth = () => {
   const [authToken, setAuthToken] = useState<string | null>(null);
@@ -10,14 +11,17 @@ export const useAuth = () => {
       const response: AuthResponse = await loginUser(username, password);
       if (response.token) {
         setAuthToken(response.token);
-        return { success: true, role: response.role };
+        return {
+          success: true,
+          role: response.role,
+          message: response.message,
+        };
       }
-      return { success: false, role: null };
+      return { success: false, role: null, message: response.message };
     } catch (error) {
-      console.error(error);
-      return { success: false, role: null };
+      return { success: false, role: null, message: error };
     }
   };
 
-  return { authToken, login };
+  return { authToken, login, message };
 };

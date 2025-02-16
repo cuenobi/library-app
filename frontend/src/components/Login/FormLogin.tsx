@@ -3,18 +3,20 @@ import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { LoginForm } from "@ant-design/pro-components";
-import { Button, Form, Input, Checkbox, message } from "antd";
+import { Button, Form, Input, Checkbox } from "antd";
 import { useAuth } from "../../hooks/useAuth";
+import ErrorAlert from "../Alert/Error";
 
 export default () => {
   const { login } = useAuth();
   const router = useRouter();
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   const handleRegister = (
     e: React.MouseEvent<HTMLAnchorElement, MouseEvent>
   ) => {
     e.preventDefault();
-    router.push("/register"); // ใช้ router.push แทน href
+    router.push("/register");
   };
 
   const handleSubmit = async (values: {
@@ -23,21 +25,34 @@ export default () => {
   }) => {
     const { username, password } = values;
 
-    const { success, role } = await login(username, password);
+    try {
+      const { success, role, message } = await login(username, password);
 
-    if (success) {
-      window.dispatchEvent(new Event("storage"));
-      localStorage.setItem("username", username);
-      if (role) {
-        localStorage.setItem("role", role);
-      }
+      if (success) {
+        window.dispatchEvent(new Event("storage"));
+        localStorage.setItem("username", username);
+        if (role) {
+          localStorage.setItem("role", role);
+        }
 
-      if (role === "2") {
-        router.push("/dashboard");
+        if (role === "2") {
+          router.push("/dashboard");
+        } else {
+          router.push("/home");
+        }
       } else {
-        router.push("/home");
+        if (typeof message === "string") {
+          setErrorMessage(message);
+        } else if (message instanceof Error) {
+          setErrorMessage(message.message);
+        }
       }
-    } else {
+    } catch (error) {
+      if (error instanceof Error) {
+        setErrorMessage(error.message);
+      } else {
+        setErrorMessage("An unknown error occurred");
+      }
     }
   };
 
@@ -52,6 +67,8 @@ export default () => {
       initialValues={{ remember: true }}
       submitter={false}
     >
+      {errorMessage && <ErrorAlert message={errorMessage} />}
+
       <Form.Item
         name="username"
         label="Username"
