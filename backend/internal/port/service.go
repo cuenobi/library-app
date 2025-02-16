@@ -6,7 +6,7 @@ type UserService interface {
 	GetAllMember() ([]*model.User, error)
 	CreateUser(user *model.User) error
 	CreateLibrarian(user *model.User) error
-	Authentication(username, password string) (string, error)
+	Authentication(username, password string) (string, string, error)
 }
 
 type BookService interface {

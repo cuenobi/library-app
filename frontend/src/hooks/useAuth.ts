@@ -10,12 +10,12 @@ export const useAuth = () => {
       const response: AuthResponse = await loginUser(username, password);
       if (response.token) {
         setAuthToken(response.token);
-        return true;
+        return { success: true, role: response.role };
       }
-      return false;
+      return { success: false, role: null };
     } catch (error) {
       console.error(error);
-      return false;
+      return { success: false, role: null };
     }
   };
 

@@ -22,7 +22,7 @@ func (_m *UserService) EXPECT() *UserService_Expecter {
 }
 
 // Authentication provides a mock function with given fields: username, password
-func (_m *UserService) Authentication(username string, password string) (string, error) {
+func (_m *UserService) Authentication(username string, password string) (string, string, error) {
 	ret := _m.Called(username, password)
 
 	if len(ret) == 0 {
@@ -30,8 +30,9 @@ func (_m *UserService) Authentication(username string, password string) (string,
 	}
 
 	var r0 string
-	var r1 error
-	if rf, ok := ret.Get(0).(func(string, string) (string, error)); ok {
+	var r1 string
+	var r2 error
+	if rf, ok := ret.Get(0).(func(string, string) (string, string, error)); ok {
 		return rf(username, password)
 	}
 	if rf, ok := ret.Get(0).(func(string, string) string); ok {
@@ -40,13 +41,19 @@ func (_m *UserService) Authentication(username string, password string) (string,
 		r0 = ret.Get(0).(string)
 	}
 
-	if rf, ok := ret.Get(1).(func(string, string) error); ok {
+	if rf, ok := ret.Get(1).(func(string, string) string); ok {
 		r1 = rf(username, password)
 	} else {
-		r1 = ret.Error(1)
+		r1 = ret.Get(1).(string)
 	}
 
-	return r0, r1
+	if rf, ok := ret.Get(2).(func(string, string) error); ok {
+		r2 = rf(username, password)
+	} else {
+		r2 = ret.Error(2)
+	}
+
+	return r0, r1, r2
 }
 
 // UserService_Authentication_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Authentication'
@@ -68,12 +75,12 @@ func (_c *UserService_Authentication_Call) Run(run func(username string, passwor
 	return _c
 }
 
-func (_c *UserService_Authentication_Call) Return(_a0 string, _a1 error) *UserService_Authentication_Call {
-	_c.Call.Return(_a0, _a1)
+func (_c *UserService_Authentication_Call) Return(_a0 string, _a1 string, _a2 error) *UserService_Authentication_Call {
+	_c.Call.Return(_a0, _a1, _a2)
 	return _c
 }
 
-func (_c *UserService_Authentication_Call) RunAndReturn(run func(string, string) (string, error)) *UserService_Authentication_Call {
+func (_c *UserService_Authentication_Call) RunAndReturn(run func(string, string) (string, string, error)) *UserService_Authentication_Call {
 	_c.Call.Return(run)
 	return _c
 }

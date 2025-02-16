@@ -101,25 +101,25 @@ func (u *UserService) CreateLibrarian(user *model.User) error {
 // If the username and password matches, it will generate a JWT token for the user.
 // If the username and password does not match, or if there is an error while
 // retrieving the user from the database, it will return an error.
-func (u *UserService) Authentication(username, password string) (string, error) {
+func (u *UserService) Authentication(username, password string) (string, string, error) {
 	// Retrieve the user from the database based on the username
 	user, err := u.userRepo.GetUserByUsername(username)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
 	// Compare the provided password with the hashed password in the database
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
 		if err.Error() == "crypto/bcrypt: hashedPassword is not the hash of the given password" {
-			return "", fmt.Errorf("invalid credential")
+			return "", "", fmt.Errorf("invalid credential")
 		}
-		return "", err
+		return "", "", err
 	}
 
 	// Generate a JWT token for the user
 	token := u.jwt.Generate(user.Username, user.Role)
 
-	return token, nil
+	return token, user.Role, nil
 }
 
 func (u *UserService) GetAllMember() ([]*model.User, error) {

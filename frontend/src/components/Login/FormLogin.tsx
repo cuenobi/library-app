@@ -9,14 +9,6 @@ import { useAuth } from "../../hooks/useAuth";
 export default () => {
   const { login } = useAuth();
   const router = useRouter();
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-
-  const handleRegister = (
-    e: React.MouseEvent<HTMLAnchorElement, MouseEvent>
-  ) => {
-    e.preventDefault();
-    router.push("/register");
-  };
 
   const handleSubmit = async (values: {
     username: string;
@@ -24,16 +16,21 @@ export default () => {
   }) => {
     const { username, password } = values;
 
-    const success = await login(username, password);
+    const { success, role } = await login(username, password);
+
     if (success) {
       message.success("Login successful!");
-
-      localStorage.setItem("username", username);
-
-      setIsAuthenticated(true);
       window.dispatchEvent(new Event("storage"));
+      localStorage.setItem("username", username);
+      if (role) {
+        localStorage.setItem("role", role);
+      }
 
-      router.push("/register");
+      if (role === "2") {
+        router.push("/dashboard");
+      } else {
+        router.push("/home");
+      }
     } else {
       message.error("Login failed! Please check your credentials.");
     }
@@ -68,19 +65,7 @@ export default () => {
         />
       </Form.Item>
       <Form.Item name="remember" valuePropName="checked">
-        <div>
-          <Checkbox>Remember me</Checkbox>
-          <a
-            style={{
-              float: "right",
-              color: "#1890ff",
-            }}
-            href="/register"
-            onClick={handleRegister}
-          >
-            Don't have an account
-          </a>
-        </div>
+        <Checkbox>Remember me</Checkbox>
       </Form.Item>
       <Form.Item>
         <Button type="primary" htmlType="submit" style={{ width: "100%" }}>

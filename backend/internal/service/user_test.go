@@ -143,14 +143,14 @@ func (u *UserServiceSuite) TestAuthenticationSuccess() {
 	u.mockUserRepo.EXPECT().GetUserByUsername(mock.Anything).Return(u.mockUser, nil)
 	u.mockJwt.EXPECT().Generate(mock.Anything, mock.Anything).Return(mock.Anything)
 
-	_, err := u.service.Authentication(u.mockUser.Username, u.mockPassword)
+	_, _, err := u.service.Authentication(u.mockUser.Username, u.mockPassword)
 	u.Require().NoError(err)
 }
 
 func (u *UserServiceSuite) TestAuthenticationGetUserError() {
 	u.mockUserRepo.EXPECT().GetUserByUsername(mock.Anything).Return(nil, fmt.Errorf(mock.Anything))
 
-	_, err := u.service.Authentication(u.mockUser.Username, u.mockPassword)
+	_, _, err := u.service.Authentication(u.mockUser.Username, u.mockPassword)
 	u.Require().Error(err)
 	u.Require().Equal(mock.Anything, err.Error())
 }
@@ -158,6 +158,6 @@ func (u *UserServiceSuite) TestAuthenticationGetUserError() {
 func (u *UserServiceSuite) TestAuthenticationCompareError() {
 	u.mockUserRepo.EXPECT().GetUserByUsername(mock.Anything).Return(u.mockUser, nil)
 
-	_, err := u.service.Authentication(u.mockUser.Username, u.mockUser.Password)
+	_, _, err := u.service.Authentication(u.mockUser.Username, u.mockUser.Password)
 	u.Require().Error(err)
 }

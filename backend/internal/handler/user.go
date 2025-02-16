@@ -102,7 +102,7 @@ func (u *UserHandler) Login(ctx *fiber.Ctx) error {
 		})
 	}
 
-	token, err := u.userService.Authentication(input.Username, input.Password)
+	token, role, err := u.userService.Authentication(input.Username, input.Password)
 	if err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": err.Error(),
@@ -111,6 +111,7 @@ func (u *UserHandler) Login(ctx *fiber.Ctx) error {
 
 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
 		"token":   token,
+		"role":    role,
 		"message": "login success",
 	})
 }

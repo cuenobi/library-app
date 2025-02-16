@@ -4,6 +4,7 @@ import React from "react";
 import { Layout } from "antd";
 import Navbar from "../components/Navbar/NavBar";
 import "../app/globals.css";
+import CookiePolicy from "@/components/Cookie/CookiePolicy";
 
 const { Content, Footer } = Layout;
 
@@ -27,8 +28,15 @@ export default function RootLayout({
             {children}
           </Content>
           <Footer style={{ textAlign: "center" }}>
-            Copyright ©{new Date().getFullYear()} Sitthikorn Khumthong
+            Copyright ©{new Date().getFullYear()}{" "}
+            <a
+              href="https://www.linkedin.com/in/sitthikorn-khu/"
+              target="_blank"
+            >
+              Sitthikorn Khumthong
+            </a>
           </Footer>
+          <CookiePolicy />
         </Layout>
       </body>
     </html>

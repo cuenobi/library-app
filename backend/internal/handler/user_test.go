@@ -173,7 +173,7 @@ func (u *UserHandlerSuite) TestLogin_Success() {
 		"password": "password123"
 	}`
 
-	u.mockService.EXPECT().Authentication(mock.Anything, mock.Anything).Return(mock.Anything, nil)
+	u.mockService.EXPECT().Authentication(mock.Anything, mock.Anything).Return(mock.Anything, mock.Anything, nil)
 
 	req := httptest.NewRequest("POST", "/login", strings.NewReader(inputBody))
 	req.Header.Set("Content-Type", "application/json")
@@ -213,7 +213,7 @@ func (u *UserHandlerSuite) TestLogin_FailAuthentication() {
 		"password": "wrongpassword"
 	}`
 
-	u.mockService.On("Authentication", "testuser", "wrongpassword").Return("", fmt.Errorf("invalid username or password"))
+	u.mockService.On("Authentication", "testuser", "wrongpassword").Return("", "", fmt.Errorf("invalid username or password"))
 
 	req := httptest.NewRequest("POST", "/login", strings.NewReader(inputBody))
 	req.Header.Set("Content-Type", "application/json")

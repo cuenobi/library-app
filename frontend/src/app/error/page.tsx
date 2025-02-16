@@ -1,22 +1,11 @@
 "use client";
-import React, { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import React from "react";
 import { Layout } from "antd";
-import UserTable from "@/components/Table/UserTable";
+import InvalidCredential from "@/components/Result/InvalidCredential";
 
 const { Content } = Layout;
 
 export default function Dashboard() {
-  const router = useRouter();
-
-  useEffect(() => {
-    const role = localStorage.getItem("role");
-
-    if (role !== "2") {
-      router.push("/error");
-    }
-  }, []);
-
   return (
     <Layout>
       <Content style={{ padding: "24px 48px" }}>
@@ -28,7 +17,7 @@ export default function Dashboard() {
             borderRadius: 8,
           }}
         >
-          <UserTable />
+          <InvalidCredential />
         </div>
       </Content>
     </Layout>
