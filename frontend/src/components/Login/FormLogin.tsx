@@ -10,6 +10,13 @@ export default () => {
   const { login } = useAuth();
   const router = useRouter();
 
+  const handleRegister = (
+    e: React.MouseEvent<HTMLAnchorElement, MouseEvent>
+  ) => {
+    e.preventDefault();
+    router.push("/register"); // ใช้ router.push แทน href
+  };
+
   const handleSubmit = async (values: {
     username: string;
     password: string;
@@ -65,7 +72,16 @@ export default () => {
         />
       </Form.Item>
       <Form.Item name="remember" valuePropName="checked">
-        <Checkbox>Remember me</Checkbox>
+        <div>
+          <Checkbox>Remember me</Checkbox>
+          <a
+            style={{ float: "right", color: "#1890ff" }}
+            href="/register"
+            onClick={handleRegister}
+          >
+            Don't have an account
+          </a>
+        </div>
       </Form.Item>
       <Form.Item>
         <Button type="primary" htmlType="submit" style={{ width: "100%" }}>
