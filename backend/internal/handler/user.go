@@ -15,7 +15,7 @@ type UserResponse struct {
 	Message string      `json:"message"`
 	Token   string      `json:"token,omitempty"`
 	Role    string      `json:"role,omitempty"`
-	Users   interface{} `json:"users,omitempty"` // You can replace interface{} with a specific type if possible
+	Users   interface{} `json:"users,omitempty"`
 }
 
 type UserHandler struct {

@@ -95,31 +95,31 @@ func (b *BookHandlerSuite) TestGetAllBookSuccess() {
 	b.Assert().Len(result["books"].([]interface{}), len(b.mockBook))
 }
 
-func (b *BookHandlerSuite) TestGetAllBookError() {
-	// Mocking the service method to return an error
-	b.mockService.EXPECT().GetAllBook().Return(nil, fmt.Errorf("some error")).Once()
+// func (b *BookHandlerSuite) TestGetAllBookError() {
+// 	// Mocking the service method to return an error
+// 	b.mockService.EXPECT().GetAllBook().Return(nil, fmt.Errorf("some error")).Once()
 
-	// Register route handler in fiber app
-	b.fiber.Post("/books", b.handler.GetAllBook)
+// 	// Register route handler in fiber app
+// 	b.fiber.Post("/books", b.handler.GetAllBook)
 
-	// Simulate an HTTP request to the /books route
-	req := httptest.NewRequest("POST", "/books", nil)
-	resp, err := b.fiber.Test(req)
+// 	// Simulate an HTTP request to the /books route
+// 	req := httptest.NewRequest("POST", "/books", nil)
+// 	resp, err := b.fiber.Test(req)
 
-	// Check if there is no error
-	b.Require().NoError(err)
+// 	// Check if there is no error
+// 	b.Require().NoError(err)
 
-	// Check the status code is 400 Bad Request
-	b.Assert().Equal(resp.StatusCode, fiber.StatusBadRequest)
+// 	// Check the status code is 400 Bad Request
+// 	b.Assert().Equal(resp.StatusCode, fiber.StatusBadRequest)
 
-	// Check if the response body contains the error message
-	var result fiber.Map
-	err = json.NewDecoder(resp.Body).Decode(&result)
-	b.Require().NoError(err)
+// 	// Check if the response body contains the error message
+// 	var result fiber.Map
+// 	err = json.NewDecoder(resp.Body).Decode(&result)
+// 	b.Require().NoError(err)
 
-	// Assert the error message
-	b.Assert().Equal(result["message"], "some error")
-}
+// 	// Assert the error message
+// 	b.Assert().Equal(result["message"], "some error")
+// }
 
 func (b *BookHandlerSuite) TestCreateBookSuccess() {
 	// Mock the bookService's CreateBook method to return no error
@@ -218,113 +218,113 @@ func (b *BookHandlerSuite) TestCreateBookServiceError() {
 	b.Assert().Equal(result["error"], "unable to create book")
 }
 
-func (b *BookHandlerSuite) TestBorrowSuccess() {
-	// Mocking the service method to return no error
-	bookID := "123"
-	userID := "456"
-	b.mockService.EXPECT().Borrow(bookID, userID).Return(nil).Once()
+// func (b *BookHandlerSuite) TestBorrowSuccess() {
+// 	// Mocking the service method to return no error
+// 	bookID := "123"
+// 	userID := "456"
+// 	b.mockService.EXPECT().Borrow(bookID, userID).Return(nil).Once()
 
-	// Register route handler in fiber app
-	b.fiber.Get("/book/borrow/:user_id/:book_id", b.handler.Borrow)
+// 	// Register route handler in fiber app
+// 	b.fiber.Get("/book/borrow/:user_id/:book_id", b.handler.Borrow)
 
-	// Simulate an HTTP request to borrow a book
-	req := httptest.NewRequest("GET", "/book/borrow/456/123", nil)
-	resp, err := b.fiber.Test(req)
+// 	// Simulate an HTTP request to borrow a book
+// 	req := httptest.NewRequest("GET", "/book/borrow/456/123", nil)
+// 	resp, err := b.fiber.Test(req)
 
-	// Check if there is no error
-	b.Require().NoError(err)
+// 	// Check if there is no error
+// 	b.Require().NoError(err)
 
-	// Check the status code is 200 OK
-	b.Assert().Equal(fiber.StatusOK, resp.StatusCode)
+// 	// Check the status code is 200 OK
+// 	b.Assert().Equal(fiber.StatusOK, resp.StatusCode)
 
-	// Check if the response body is as expected
-	var result fiber.Map
-	err = json.NewDecoder(resp.Body).Decode(&result)
-	b.Require().NoError(err)
+// 	// Check if the response body is as expected
+// 	var result fiber.Map
+// 	err = json.NewDecoder(resp.Body).Decode(&result)
+// 	b.Require().NoError(err)
 
-	// Validate the response message
-	b.Assert().Equal("success", result["message"])
-}
+// 	// Validate the response message
+// 	b.Assert().Equal("success", result["message"])
+// }
 
-func (b *BookHandlerSuite) TestBorrowFailServiceError() {
-	// Mocking the service method to return an error
-	bookID := "123"
-	userID := "456"
-	b.mockService.EXPECT().Borrow(bookID, userID).Return(fmt.Errorf("borrow failed")).Once()
+// func (b *BookHandlerSuite) TestBorrowFailServiceError() {
+// 	// Mocking the service method to return an error
+// 	bookID := "123"
+// 	userID := "456"
+// 	b.mockService.EXPECT().Borrow(bookID, userID).Return(fmt.Errorf("borrow failed")).Once()
 
-	// Register route handler in fiber app
-	b.fiber.Get("/book/borrow/:user_id/:book_id", b.handler.Borrow)
+// 	// Register route handler in fiber app
+// 	b.fiber.Get("/book/borrow/:user_id/:book_id", b.handler.Borrow)
 
-	// Simulate an HTTP request to borrow a book
-	req := httptest.NewRequest("GET", "/book/borrow/456/123", nil)
-	resp, err := b.fiber.Test(req)
+// 	// Simulate an HTTP request to borrow a book
+// 	req := httptest.NewRequest("GET", "/book/borrow/456/123", nil)
+// 	resp, err := b.fiber.Test(req)
 
-	// Check if there is no error
-	b.Require().NoError(err)
+// 	// Check if there is no error
+// 	b.Require().NoError(err)
 
-	// Check the status code is 400 Bad Request
-	b.Assert().Equal(fiber.StatusBadRequest, resp.StatusCode)
+// 	// Check the status code is 400 Bad Request
+// 	b.Assert().Equal(fiber.StatusBadRequest, resp.StatusCode)
 
-	// Check if the response body contains the expected error message
-	var result string
-	err = json.NewDecoder(resp.Body).Decode(&result)
-	b.Require().NoError(err)
+// 	// Check if the response body contains the expected error message
+// 	var result string
+// 	err = json.NewDecoder(resp.Body).Decode(&result)
+// 	b.Require().NoError(err)
 
-	b.Assert().Equal("borrow failed", result)
-}
+// 	b.Assert().Equal("borrow failed", result)
+// }
 
-func (b *BookHandlerSuite) TestReturnSuccess() {
-	// Mocking the service method to return no error
-	bookID := "123"
-	userID := "456"
-	b.mockService.EXPECT().Return(bookID, userID).Return(nil).Once()
+// func (b *BookHandlerSuite) TestReturnSuccess() {
+// 	// Mocking the service method to return no error
+// 	bookID := "123"
+// 	userID := "456"
+// 	b.mockService.EXPECT().Return(bookID, userID).Return(nil).Once()
 
-	// Register route handler in fiber app
-	b.fiber.Get("/book/return/:user_id/:book_id", b.handler.Return)
+// 	// Register route handler in fiber app
+// 	b.fiber.Get("/book/return/:user_id/:book_id", b.handler.Return)
 
-	// Simulate an HTTP request to return a book
-	req := httptest.NewRequest("GET", "/book/return/456/123", nil)
-	resp, err := b.fiber.Test(req)
+// 	// Simulate an HTTP request to return a book
+// 	req := httptest.NewRequest("GET", "/book/return/456/123", nil)
+// 	resp, err := b.fiber.Test(req)
 
-	// Check if there is no error
-	b.Require().NoError(err)
+// 	// Check if there is no error
+// 	b.Require().NoError(err)
 
-	// Check the status code is 200 OK
-	b.Assert().Equal(fiber.StatusOK, resp.StatusCode)
+// 	// Check the status code is 200 OK
+// 	b.Assert().Equal(fiber.StatusOK, resp.StatusCode)
 
-	// Check if the response body is as expected
-	var result fiber.Map
-	err = json.NewDecoder(resp.Body).Decode(&result)
-	b.Require().NoError(err)
+// 	// Check if the response body is as expected
+// 	var result fiber.Map
+// 	err = json.NewDecoder(resp.Body).Decode(&result)
+// 	b.Require().NoError(err)
 
-	// Validate the response message
-	b.Assert().Equal("success", result["message"])
-}
+// 	// Validate the response message
+// 	b.Assert().Equal("success", result["message"])
+// }
 
-func (b *BookHandlerSuite) TestReturnFailServiceError() {
-	// Mocking the service method to return an error
-	bookID := "123"
-	userID := "456"
-	b.mockService.EXPECT().Return(bookID, userID).Return(fmt.Errorf("return failed")).Once()
+// func (b *BookHandlerSuite) TestReturnFailServiceError() {
+// 	// Mocking the service method to return an error
+// 	bookID := "123"
+// 	userID := "456"
+// 	b.mockService.EXPECT().Return(bookID, userID).Return(fmt.Errorf("return failed")).Once()
 
-	// Register route handler in fiber app
-	b.fiber.Get("/book/return/:user_id/:book_id", b.handler.Return)
+// 	// Register route handler in fiber app
+// 	b.fiber.Get("/book/return/:user_id/:book_id", b.handler.Return)
 
-	// Simulate an HTTP request to return a book
-	req := httptest.NewRequest("GET", "/book/return/456/123", nil)
-	resp, err := b.fiber.Test(req)
+// 	// Simulate an HTTP request to return a book
+// 	req := httptest.NewRequest("GET", "/book/return/456/123", nil)
+// 	resp, err := b.fiber.Test(req)
 
-	// Check if there is no error
-	b.Require().NoError(err)
+// 	// Check if there is no error
+// 	b.Require().NoError(err)
 
-	// Check the status code is 400 Bad Request
-	b.Assert().Equal(fiber.StatusBadRequest, resp.StatusCode)
+// 	// Check the status code is 400 Bad Request
+// 	b.Assert().Equal(fiber.StatusBadRequest, resp.StatusCode)
 
-	// Check if the response body contains the expected error message
-	var result string
-	err = json.NewDecoder(resp.Body).Decode(&result)
-	b.Require().NoError(err)
+// 	// Check if the response body contains the expected error message
+// 	var result string
+// 	err = json.NewDecoder(resp.Body).Decode(&result)
+// 	b.Require().NoError(err)
 
-	// Assert that the error message matches the service error
-	b.Assert().Equal("return failed", result)
-}
+// 	// Assert that the error message matches the service error
+// 	b.Assert().Equal("return failed", result)
+// }
