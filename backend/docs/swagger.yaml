@@ -1,0 +1,243 @@
+definitions:
+  handler.BookResponse:
+    properties:
+      books:
+        description: You can replace interface{} with a specific type if possible
+      message:
+        type: string
+    type: object
+  handler.CreateBookBody:
+    properties:
+      category:
+        type: string
+      name:
+        type: string
+      stock:
+        type: integer
+    required:
+    - category
+    - name
+    - stock
+    type: object
+  handler.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  handler.LoginBody:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  handler.RegisterBody:
+    properties:
+      name:
+        type: string
+      password:
+        type: string
+      role:
+        type: string
+      username:
+        type: string
+    required:
+    - name
+    - password
+    - role
+    - username
+    type: object
+  handler.UserResponse:
+    properties:
+      message:
+        type: string
+      role:
+        type: string
+      token:
+        type: string
+      users:
+        description: You can replace interface{} with a specific type if possible
+    type: object
+info:
+  contact: {}
+paths:
+  /book/borrow/{user_id}/{book_id}:
+    post:
+      consumes:
+      - application/json
+      description: Borrow a book by user ID and book ID
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      - description: Book ID
+        in: path
+        name: book_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.BookResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      summary: Borrow a book
+      tags:
+      - books
+  /book/create:
+    post:
+      consumes:
+      - application/json
+      description: Add a new book to the library
+      parameters:
+      - description: Book details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.CreateBookBody'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handler.BookResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      summary: Create a new book
+      tags:
+      - books
+  /book/return/{user_id}/{book_id}:
+    post:
+      consumes:
+      - application/json
+      description: Return a borrowed book by user ID and book ID
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      - description: Book ID
+        in: path
+        name: book_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.BookResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      summary: Return a book
+      tags:
+      - books
+  /books:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve all books in the library
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.BookResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      summary: Get all books
+      tags:
+      - books
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate user and return JWT token
+      parameters:
+      - description: User login details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.LoginBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.UserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      summary: User login
+      tags:
+      - users
+  /user/register:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user account
+      parameters:
+      - description: User registration details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.RegisterBody'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handler.UserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      summary: Register a new user
+      tags:
+      - users
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve all registered users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.UserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      summary: Get all members
+      tags:
+      - users
+swagger: "2.0"

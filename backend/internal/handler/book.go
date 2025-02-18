@@ -11,6 +11,19 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// Define response structs for Swagger documentation
+
+// BookResponse is the response format for GetAllBook
+type BookResponse struct {
+	Message string      `json:"message"`
+	Books   interface{} `json:"books,omitempty"` // You can replace interface{} with a specific type if possible
+}
+
+// ErrorResponse is a generic response format for errors
+type ErrorResponse struct {
+	Error string `json:"error"`
+}
+
 type BookHandler struct {
 	fiber       *fiber.App
 	bookService port.BookService
@@ -35,18 +48,29 @@ func NewRouteBookHandler(f *fiber.App, bookService port.BookService, jwt port.JW
 	return handler
 }
 
+// GetAllBook godoc
+// @Summary Get all books
+// @Description Retrieve all books in the library
+// @Tags books
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} BookResponse
+// @Failure 400 {object} ErrorResponse
+// @Router /books [get]
 func (b *BookHandler) GetAllBook(ctx *fiber.Ctx) error {
 	books, err := b.bookService.GetAllBook()
 	if err != nil {
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": err.Error(),
+		return ctx.Status(fiber.StatusBadRequest).JSON(ErrorResponse{
+			Error: err.Error(),
 		})
 	}
 
-	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
-		"message": "get books success",
-		"books":   books,
-	})
+	response := BookResponse{
+		Message: "get books success",
+		Books:   books,
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(response)
 }
 
 type CreateBookBody struct {
@@ -55,15 +79,27 @@ type CreateBookBody struct {
 	Stock    int    `json:"stock" validate:"required"`
 }
 
+// CreateBook godoc
+// @Summary Create a new book
+// @Description Add a new book to the library
+// @Tags books
+// @Accept  json
+// @Produce  json
+// @Param request body CreateBookBody true "Book details"
+// @Success 201 {object} BookResponse
+// @Failure 400 {object} ErrorResponse
+// @Router /book/create [post]
 func (b *BookHandler) CreateBook(ctx *fiber.Ctx) error {
 	var input CreateBookBody
 	if err := ctx.BodyParser(&input); err != nil {
-		return ctx.Status(fiber.StatusBadRequest).JSON(err.Error())
+		return ctx.Status(fiber.StatusBadRequest).JSON(ErrorResponse{
+			Error: err.Error(),
+		})
 	}
 
 	if err := b.validator.Struct(input); err != nil {
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": err.Error(),
+		return ctx.Status(fiber.StatusBadRequest).JSON(ErrorResponse{
+			Error: err.Error(),
 		})
 	}
 
@@ -81,54 +117,89 @@ func (b *BookHandler) CreateBook(ctx *fiber.Ctx) error {
 
 	err := b.bookService.CreateBook(book)
 	if err != nil {
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": err.Error(),
+		return ctx.Status(fiber.StatusBadRequest).JSON(ErrorResponse{
+			Error: err.Error(),
 		})
 	}
 
-	return ctx.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"message": "create success",
+	// Create success response
+	return ctx.Status(fiber.StatusCreated).JSON(BookResponse{
+		Message: "create success",
 	})
 }
 
+// Borrow godoc
+// @Summary Borrow a book
+// @Description Borrow a book by user ID and book ID
+// @Tags books
+// @Accept  json
+// @Produce  json
+// @Param user_id path string true "User ID"
+// @Param book_id path string true "Book ID"
+// @Success 200 {object} BookResponse
+// @Failure 400 {object} ErrorResponse
+// @Router /book/borrow/{user_id}/{book_id} [post]
 func (b *BookHandler) Borrow(ctx *fiber.Ctx) error {
 	bookID, err := url.QueryUnescape(ctx.Params("book_id"))
 	if err != nil {
-		return ctx.Status(fiber.StatusBadRequest).JSON(err.Error())
+		return ctx.Status(fiber.StatusBadRequest).JSON(ErrorResponse{
+			Error: err.Error(),
+		})
 	}
 
 	userID, err := url.QueryUnescape(ctx.Params("user_id"))
 	if err != nil {
-		return ctx.Status(fiber.StatusBadRequest).JSON(err.Error())
+		return ctx.Status(fiber.StatusBadRequest).JSON(ErrorResponse{
+			Error: err.Error(),
+		})
 	}
 
 	err = b.bookService.Borrow(bookID, userID)
 	if err != nil {
-		return ctx.Status(fiber.StatusBadRequest).JSON(err.Error())
+		return ctx.Status(fiber.StatusBadRequest).JSON(ErrorResponse{
+			Error: err.Error(),
+		})
 	}
 
-	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
-		"message": "success",
+	return ctx.Status(fiber.StatusOK).JSON(BookResponse{
+		Message: "borrow success",
 	})
 }
 
+// Return godoc
+// @Summary Return a book
+// @Description Return a borrowed book by user ID and book ID
+// @Tags books
+// @Accept  json
+// @Produce  json
+// @Param user_id path string true "User ID"
+// @Param book_id path string true "Book ID"
+// @Success 200 {object} BookResponse
+// @Failure 400 {object} ErrorResponse
+// @Router /book/return/{user_id}/{book_id} [post]
 func (b *BookHandler) Return(ctx *fiber.Ctx) error {
 	bookID, err := url.QueryUnescape(ctx.Params("book_id"))
 	if err != nil {
-		return ctx.Status(fiber.StatusBadRequest).JSON(err.Error())
+		return ctx.Status(fiber.StatusBadRequest).JSON(ErrorResponse{
+			Error: err.Error(),
+		})
 	}
 
 	userID, err := url.QueryUnescape(ctx.Params("user_id"))
 	if err != nil {
-		return ctx.Status(fiber.StatusBadRequest).JSON(err.Error())
+		return ctx.Status(fiber.StatusBadRequest).JSON(ErrorResponse{
+			Error: err.Error(),
+		})
 	}
 
 	err = b.bookService.Return(bookID, userID)
 	if err != nil {
-		return ctx.Status(fiber.StatusBadRequest).JSON(err.Error())
+		return ctx.Status(fiber.StatusBadRequest).JSON(ErrorResponse{
+			Error: err.Error(),
+		})
 	}
 
-	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
-		"message": "success",
+	return ctx.Status(fiber.StatusOK).JSON(BookResponse{
+		Message: "return success",
 	})
 }

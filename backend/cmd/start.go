@@ -10,6 +10,7 @@ import (
 	"syscall"
 	"time"
 
+	_ "library-service/docs" // Import docs package
 	"library-service/configs"
 	"library-service/internal/adapter/jwt"
 	"library-service/internal/adapter/postgres"
@@ -21,45 +22,49 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
+	"github.com/gofiber/swagger"
 	"github.com/spf13/cobra"
 )
 
-func start(cmd *cobra.Command, args []string) (err error) {
+// @title Library Service API
+// @version 1.0
+// @description This is a sample server for a library service.
+// @host localhost:8080
+// @BasePath /
+func start(cmd *cobra.Command, args []string) error {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
 		Level: slog.LevelError,
 	}))
 
 	ctx := context.Background()
-
 	cfg := configs.GetConfig()
 
 	fmt.Println("App is starting...")
 
-	// init postgres
+	// Init database
 	pg := postgres.NewPostgres(cfg.Postgres, ctx)
-
-	// seeding
 	postgres.SeedData(cfg.Postgres, pg)
 
-	// init fiber
+	// Init fiber server
 	f := startServer(cfg.ServerConfig.Port, logger, cfg)
 
-	// init user repository
+	// Init repositories
 	userRepo := postgres.NewUser(pg)
 	bookRepo := postgres.NewBook(pg)
 
-	// init jwt adapter
-	jwt := jwt.NewJwtToken(cfg.JwtConfig)
-
-	// init services
-	userService := service.NewUserService(userRepo, jwt)
+	// Init services
+	jwtService := jwt.NewJwtToken(cfg.JwtConfig)
+	userService := service.NewUserService(userRepo, jwtService)
 	bookService := service.NewBookService(bookRepo)
 
 	validate := validator.New()
 
-	// init routes
-	handler.NewRouteUserHandler(f, userService, jwt, validate)
-	handler.NewRouteBookHandler(f, bookService, jwt, validate)
+	// Register routes
+	handler.NewRouteUserHandler(f, userService, jwtService, validate)
+	handler.NewRouteBookHandler(f, bookService, jwtService, validate)
+
+	// Swagger route
+	f.Get("/swagger/*", swagger.HandlerDefault)
 
 	gracefulShutdown(f, logger)
 
