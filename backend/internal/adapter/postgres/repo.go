@@ -32,12 +32,28 @@ func NewPostgres(cfg *PostgresConfig, ctx context.Context) *gorm.DB {
 	// Construct the PostgreSQL connection string
 	connStr := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable", cfg.Host, cfg.Username, cfg.Password, cfg.Name, cfg.Port)
 
-	// Open the connection
-	db, err := gorm.Open(postgres.Open(connStr), &gorm.Config{})
-	if err != nil {
-		log.Fatal("connect to db error:", err)
+	var db *gorm.DB
+	var err error
+
+	// Retry up to 5 times
+	for i := 0; i < 5; i++ {
+		// Open the connection
+		db, err = gorm.Open(postgres.Open(connStr), &gorm.Config{})
+		if err == nil {
+			// Successfully connected, proceed with migration
+			break
+		}
+
+		// If connection fails, log the error and wait before retrying
+		log.Printf("Failed to connect to DB (attempt %d/5): %v", i+1, err)
+		time.Sleep(2 * time.Second) // Wait for 2 seconds before retrying
 	}
 
+	if err != nil {
+		log.Fatal("Could not connect to DB after 5 attempts:", err)
+	}
+
+	// Perform database migrations
 	if err := db.AutoMigrate(&model.User{}, &model.BorrowDetail{}, &model.Book{}); err != nil {
 		log.Fatal("Migration failed:", err)
 	}
