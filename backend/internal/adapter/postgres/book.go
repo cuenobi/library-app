@@ -20,7 +20,7 @@ func NewBook(db *gorm.DB) *Book {
 
 func (b *Book) GetAllBook() ([]*model.Book, error) {
 	var books []*model.Book
-	err := b.db.Model(&model.Book{}).First(books).Error
+	err := b.db.Model(&model.Book{}).Find(&books).Error
 	if err != nil {
 		return nil, err
 	}
@@ -40,7 +40,7 @@ func (b *Book) CreateBook(book *model.Book) error {
 
 func (b *Book) GetBookByID(id string) (*model.Book, error) {
 	var book *model.Book
-	result := b.db.First(&book, "10")
+	result := b.db.First(&book, id)
 	return book, result.Error
 }
 
@@ -66,6 +66,7 @@ func (b *Book) DecreaseBookStockAndAddUpdateBorrowDetail(bookID, userID string) 
 		BookName:   book.Name,
 		BorrowedAt: time.Now().Unix(),
 		UserID:     userID,
+		BookID:     bookID,
 	}).Error
 	if err != nil {
 		tx.Rollback()
@@ -95,14 +96,14 @@ func (b *Book) IncreaseBookStockAndUpdateBorrowDetail(bookID, userID string) err
 	}
 
 	var borrowDetail model.BorrowDetail
-	err = tx.First(&borrowDetail, "book_id = ? AND user_id = ?", book.ID, userID).Error
+	err = tx.First(&borrowDetail, "book_id = ? AND user_id = ? AND returned_at IS NULL", book.ID, userID).Error
 	if err != nil {
 		tx.Rollback()
 		return err
 	}
 
-	err = tx.Model(&model.BorrowDetail{}).
-		Where("name = ? AND user_id = ?", book.ID, userID).
+	err = tx.Model(borrowDetail).
+		Where("book_id = ? AND user_id = ?", book.ID, userID).
 		Update("returned_at", time.Now().Unix()).Error
 	if err != nil {
 		tx.Rollback()

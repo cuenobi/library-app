@@ -21,16 +21,22 @@ type User struct {
 }
 
 type BorrowDetail struct {
-	gorm.Model
+	ID         string `gorm:"type:uuid"`
 	BookName   string
 	BorrowedAt int64
 	ReturnedAt *int64
-	User       *User `gorm:"foreignKey:UserID;references:ID"`
 	UserID     string
 	BookID     string
 }
 
 func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
+	if u.ID == "" {
+		u.ID = strings.ReplaceAll(uuid.New().String(), "-", "")
+	}
+	return
+}
+
+func (u *BorrowDetail) BeforeCreate(tx *gorm.DB) (err error) {
 	if u.ID == "" {
 		u.ID = strings.ReplaceAll(uuid.New().String(), "-", "")
 	}

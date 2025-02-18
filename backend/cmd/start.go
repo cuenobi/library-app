@@ -46,17 +46,20 @@ func start(cmd *cobra.Command, args []string) (err error) {
 
 	// init user repository
 	userRepo := postgres.NewUser(pg)
+	bookRepo := postgres.NewBook(pg)
 
 	// init jwt adapter
 	jwt := jwt.NewJwtToken(cfg.JwtConfig)
 
 	// init services
 	userService := service.NewUserService(userRepo, jwt)
+	bookService := service.NewBookService(bookRepo)
 
 	validate := validator.New()
 
 	// init routes
 	handler.NewRouteUserHandler(f, userService, jwt, validate)
+	handler.NewRouteBookHandler(f, bookService, jwt, validate)
 
 	gracefulShutdown(f, logger)
 

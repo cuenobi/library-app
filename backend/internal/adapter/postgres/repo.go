@@ -72,20 +72,20 @@ func SeedData(cfg *PostgresConfig, db *gorm.DB) {
 		},
 	}
 
-	// Insert the users into the database. If the username already exists,
-	// updates the existing user with the given data.
+	// Insert the users into the database.
 	for _, user := range users {
 		if err := db.Clauses(clause.OnConflict{
-			Columns:   []clause.Column{{Name: "username"}},                                                      // The conflict should be checked based on the username.
-			DoUpdates: clause.AssignmentColumns([]string{"username", "password", "name", "role", "created_at"}), // The columns that should be updated if a conflict occurs.
+			Columns:   []clause.Column{{Name: "username"}},
+			DoUpdates: clause.AssignmentColumns([]string{"username", "password", "name", "role", "created_at"}),
 		}).Create(&user).Error; err != nil {
 			panic("failed to seed users: " + err.Error())
 		}
 	}
 
-	// Create two books: "The Go Programming Language" and "Clean Code".
+	// Create books
 	books := []model.Book{
 		{
+			ID:        uuid.New().String(),
 			Name:      "The Go Programming Language",
 			Category:  "Programming",
 			Status:    constant.Available,
@@ -93,6 +93,7 @@ func SeedData(cfg *PostgresConfig, db *gorm.DB) {
 			CreatedAt: func(t time.Time) *time.Time { return &t }(time.Now()),
 		},
 		{
+			ID:        uuid.New().String(),
 			Name:      "Clean Code",
 			Category:  "Programming",
 			Status:    constant.Available,
@@ -101,44 +102,52 @@ func SeedData(cfg *PostgresConfig, db *gorm.DB) {
 		},
 	}
 
-	// Insert the books into the database. If the book name already exists,
-	// updates the existing book with the given data.
+	// Insert books
 	for _, book := range books {
 		if err := db.Clauses(clause.OnConflict{
-			Columns:   []clause.Column{{Name: "name"}},                                      // The conflict should be checked based on the book name.
-			DoUpdates: clause.AssignmentColumns([]string{"name", "category", "created_at"}), // The columns that should be updated if a conflict occurs.
+			Columns:   []clause.Column{{Name: "name"}},
+			DoUpdates: clause.AssignmentColumns([]string{"name", "category", "created_at"}),
 		}).Create(&book).Error; err != nil {
 			panic("failed to seed books: " + err.Error())
 		}
 	}
 
-	// Add BorrowDetails for jane_doe
-	// Assuming you have already inserted jane_doe into the database and retrieved her ID (e.g., `jane_doe_id`)
+	var count int64
+	db.Model(&model.BorrowDetail{}).Count(&count)
+	if count > 0 {
+		log.Println("Borrow details already exist, skipping seed data")
+		return // ถ้ามีข้อมูลอยู่แล้ว ให้ออกจากฟังก์ชัน ไม่ต้องเพิ่มข้อมูลซ้ำ
+	}
+
+	// หา Jane Doe
 	var janeDoe model.User
 	if err := db.Where("username = ?", "jane_doe").First(&janeDoe).Error; err != nil {
 		panic("failed to find jane_doe user: " + err.Error())
 	}
 
-	// BorrowDetails for jane_doe
-	borrowDetails := []model.BorrowDetail{
-		{
-			BookName:   "The Go Programming Language",
-			BorrowedAt: time.Now().Unix(),
-			UserID:     janeDoe.ID,
-			BookID:     "book_id_go_programming", // Assuming you have a way to link this with the book
-		},
-		{
-			BookName:   "Clean Code",
-			BorrowedAt: time.Now().Unix(),
-			UserID:     janeDoe.ID,
-			BookID:     "book_id_clean_code", // Assuming you have a way to link this with the book
-		},
+	// หา Books
+	var booksExist []model.Book
+	if err := db.Find(&booksExist).Error; err != nil {
+		panic("failed to find books: " + err.Error())
 	}
 
-	// Insert BorrowDetails for jane_doe
+	// BorrowDetails
+	var borrowDetails []*model.BorrowDetail
+	for _, book := range booksExist {
+		borrowDetails = append(borrowDetails, &model.BorrowDetail{
+			BookName:   book.Name,
+			BorrowedAt: time.Now().Unix(),
+			UserID:     janeDoe.ID,
+			BookID:     book.ID,
+		})
+	}
+
+	// Insert BorrowDetails
 	for _, borrow := range borrowDetails {
 		if err := db.Create(&borrow).Error; err != nil {
 			panic("failed to seed borrow details: " + err.Error())
 		}
 	}
+
+	log.Println("Borrow details seeded successfully")
 }
