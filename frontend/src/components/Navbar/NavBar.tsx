@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Layout, Button, Drawer } from "antd";
-import LeftMenu from "./LeftMenu";
+// import LeftMenu from "./LeftMenu";
 import RightMenu from "./RightMenu";
 import { MenuOutlined } from "@ant-design/icons";
 import { usePathname } from "next/navigation";
@@ -50,7 +50,7 @@ const Navbar: React.FC = () => {
         </a>
 
         <div className="hidden md:flex space-x-4">
-          <LeftMenu mode="horizontal" />
+          {/* <LeftMenu mode="horizontal" /> */}
           <RightMenu mode="horizontal" />
         </div>
 
@@ -66,7 +66,7 @@ const Navbar: React.FC = () => {
         onClose={toggleDrawer}
         open={open}
       >
-        <LeftMenu mode="inline" />
+        {/* <LeftMenu mode="inline" /> */}
         <RightMenu mode="vertical" />
       </Drawer>
     </Header>

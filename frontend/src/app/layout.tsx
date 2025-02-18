@@ -4,7 +4,7 @@ import React from "react";
 import { Layout } from "antd";
 import Navbar from "../components/Navbar/NavBar";
 import "../app/globals.css";
-import CookiePolicy from "@/components/Cookie/CookiePolicy";
+import CookiePolicy from "../components/Cookie/CookiePolicy";
 
 const { Content, Footer } = Layout;
 
