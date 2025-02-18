@@ -77,5 +77,9 @@ This will open the Swagger UI where you can explore and interact with the API en
    - For accessing features, please primarily use the Librarian account.
    - This application was developed within a limited timeframe (7 days) as part of a job application test.
    - This application is still under development. Features may be incomplete or unstable.
+   Below are some features I plan to add or improve in the future:
+	•	Borrowing Check: Implement a system that prevents a member from borrowing a book if they already have an active loan.
+	•	Book Status Update: Change the book’s status to Not Available when borrowed and update it back when returned.
+	•	Member Registration: Allow users to sign up and manage their accounts properly.
    - If you need additional information or have any questions, feel free to ask!
    - Some features have not been added yet. The code may not be fully completed or follow best practices in the frontend part as I am still learning it. I apologize for any inconvenience.
