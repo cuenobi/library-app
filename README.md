@@ -74,7 +74,8 @@ This will open the Swagger UI where you can explore and interact with the API en
   • Password: password123
 
 ### Notes
-    •   For accessing features, please primarily use the Librarian account.
-    •	This application is still under development. Features may be incomplete or unstable.
-    •	If you need additional information or have any questions, feel free to ask!
-    •   Some features have not been added yet. The code may not be fully completed or follow best practices in the frontend part as I am still learning it. I apologize for any inconvenience.
+   - For accessing features, please primarily use the Librarian account.
+   - This application was developed within a limited timeframe (7 days) as part of a job application test.
+   - This application is still under development. Features may be incomplete or unstable.
+   - If you need additional information or have any questions, feel free to ask!
+   - Some features have not been added yet. The code may not be fully completed or follow best practices in the frontend part as I am still learning it. I apologize for any inconvenience.
