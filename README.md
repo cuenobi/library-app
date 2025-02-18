@@ -5,11 +5,11 @@ Library App is a book borrowing and returning management system designed for lib
 ## Features
 
 - **User System**: Allow users to sign up, log in, and view their borrowing history.
-- **Book Management**: Admin can add, edit, and remove books in the library's inventory.
+- **Book Management**: Admin can add books to the library's inventory.
 - **Borrow/Return Books**: Users can borrow and return books with simple actions.
 - **Book Availability**: Check if a book is available for borrowing.
-- **Search Books**: Search books by title, author, or category.
-- **Admin Dashboard**: Admins can view the status of all borrowed books and manage user activities.
+- **Search Books**: Search books by title, or category.
+- **Librarian Dashboard**: The Librarian can view the status of all borrowed books and manage user activities.
 
 ## Tech Stack
 
@@ -45,3 +45,16 @@ Copy the .env.example file (if available) and rename it to .env. Update the envi
 Stopping the Application
     ```bash
     docker-compose down
+
+### Accessing Swagger API Documentation
+This application comes with Swagger UI for easy access to the API documentation. To view the API documentation:
+	1.	Make sure the backend is running (at http://localhost:8080).
+	2.	Open your browser and go to the following URL:
+   ```bash
+   http://localhost:8080/swagger/
+   ```
+   This will open the Swagger UI where you can explore and interact with the API endpoints.
+
+### Notes
+	•	This application is still under development. Features may be incomplete or unstable.
+	•	If you need additional information or have any questions, feel free to ask!
